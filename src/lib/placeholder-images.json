@@ -1,0 +1,118 @@
+{
+  "placeholderImages": [
+    {
+      "id": "user-avatar-1",
+      "description": "User avatar",
+      "imageUrl": "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw2fHxwZXJzb24lMjBwb3J0cmFpdHxlbnwwfHx8fDE3NjI4MDgwNTN8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "person portrait"
+    },
+    {
+      "id": "product-image-1",
+      "description": "A modern smartphone",
+      "imageUrl": "https://images.unsplash.com/photo-1598327105666-5b89351aff97?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHxzbWFydHBob25lfGVufDB8fHx8MTc2MjgzODU2N3ww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "smartphone"
+    },
+    {
+      "id": "product-image-2",
+      "description": "A sleek laptop",
+      "imageUrl": "https://images.unsplash.com/photo-1498050108023-c5249f4df085?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw5fHxsYXB0b3B8ZW58MHx8fHwxNzYyODIzNjMwfDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "laptop"
+    },
+    {
+      "id": "product-image-3",
+      "description": "Wireless headphones",
+      "imageUrl": "https://images.unsplash.com/photo-1583394838336-acd977736f90?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw0fHxoZWFkcGhvbmVzfGVufDB8fHx8MTc2Mjc2NjMzMnww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "headphones"
+    },
+    {
+      "id": "product-image-4",
+      "description": "A smartwatch",
+      "imageUrl": "https://images.unsplash.com/photo-1434494343833-76b479733705?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw4fHxzbWFydHdhdGNofGVufDB8fHx8MTc2Mjc4MzcyN3ww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "smartwatch"
+    },
+    {
+      "id": "product-image-5",
+      "description": "A digital camera",
+      "imageUrl": "https://images.unsplash.com/photo-1502920917128-1aa500764cbd?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxjYW1lcmF8ZW58MHx8fHwxNzYyODQ3MDYwfDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "camera"
+    },
+    {
+      "id": "service-image-1",
+      "description": "Software installation process",
+      "imageUrl": "https://images.unsplash.com/photo-1593642702821-c8da6771f0c6?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxzb2Z0d2FyZSUyMGluc3RhbGxhdGlvbnxlbnwwfHx8fDE3NjM0MDIyODh8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "software installation"
+    },
+    {
+      "id": "service-image-2",
+      "description": "PC maintenance",
+      "imageUrl": "https://images.unsplash.com/photo-1591783494793-948404b9d0a6?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxwYyUyMG1haW50ZW5hbmNlfGVufDB8fHx8MTc2MzQwMjMyMXww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "pc maintenance"
+    },
+    {
+      "id": "service-image-3",
+      "description": "IT consulting meeting",
+      "imageUrl": "https://images.unsplash.com/photo-1522071820081-009f0129c71c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxpdCUyMGNvbnN1bHRpbmd8ZW58MHx8fHwxNzYzNDAyMzQ0fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "it consulting"
+    },
+    {
+      "id": "service-image-4",
+      "description": "Cyber security concept",
+      "imageUrl": "https://images.unsplash.com/photo-1555949963-ff9fe0c870eb?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHx2aXJ1cyUyMHJlbW92YWx8ZW58MHx8fHwxNzYzNDAyMzY2fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "cyber security"
+    },
+    {
+      "id": "user-sales-1",
+      "description": "Avatar for Olivia Martin",
+      "imageUrl": "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxMHx8d29tYW4lMjBwb3J0cmFpdHxlbnwwfHx8fDE3NjI4MDAwNzN8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "woman portrait"
+    },
+    {
+      "id": "user-sales-2",
+      "description": "Avatar for Jackson Lee",
+      "imageUrl": "https://images.unsplash.com/photo-1607031542107-f6f46b5d54e9?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw0fHxtYW4lMjBwb3J0cmFpdHxlbnwwfHx8fDE3NjI4NTg1MjJ8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "man portrait"
+    },
+    {
+      "id": "user-sales-3",
+      "description": "Avatar for Isabella Nguyen",
+      "imageUrl": "https://images.unsplash.com/photo-1592621385612-4d7129426394?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwzfHx3b21hbiUyMHBvcnRyYWl0fGVufDB8fHx8MTc2MjgwMDA3M3ww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "woman portrait"
+    },
+    {
+      "id": "user-sales-4",
+      "description": "Avatar for William Kim",
+      "imageUrl": "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxtYW4lMjBwb3J0cmFpdHxlbnwwfHx8fDE3NjI4NTg1MjJ8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "man portrait"
+    },
+    {
+      "id": "user-sales-5",
+      "description": "Avatar for Sofia Davis",
+      "imageUrl": "https://images.unsplash.com/photo-1557053908-4793c484d06f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw0fHx3b21hbiUyMHBvcnRyYWl0fGVufDB8fHx8MTc2MjgwMDA3M3ww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "woman portrait"
+    },
+    {
+      "id": "user-generic-1",
+      "description": "Generic user avatar",
+      "imageUrl": "https://images.unsplash.com/photo-1494790108377-be9c29b29330?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxwb3J0cmFpdHxlbnwwfHx8fDE3NjM2NTg0NTV8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "portrait"
+    },
+    {
+      "id": "user-generic-2",
+      "description": "Generic user avatar",
+      "imageUrl": "https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw4fHxwb3J0cmFpdHxlbnwwfHx8fDE3NjM2NTg0NTV8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "portrait"
+    },
+    {
+      "id": "user-generic-3",
+      "description": "Generic user avatar",
+      "imageUrl": "https://images.unsplash.com/photo-1580489944761-15a19d654956?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxMnx8cG9ydHJhaXR8ZW58MHx8fHwxNzYzNjU4NDU1fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "portrait"
+    },
+    {
+      "id": "user-generic-4",
+      "description": "Generic user avatar",
+      "imageUrl": "https://images.unsplash.com/photo-1521119989659-a83eee488004?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxN3x8cG9ydHJhaXR8ZW58MHx8fHwxNzYzNjU4NDU1fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "portrait"
+    }
+  ]
+}

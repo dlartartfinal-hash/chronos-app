@@ -1,0 +1,294 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  name      String
+  password  String   @default("")
+  ownerPin  String   @default("1234")
+  referredBy String? // Código de quem indicou este usuário
+  trialEndsAt DateTime? // Data de expiração do trial (1 dia após criação)
+  createdAt DateTime @default(now())
+  
+  customers      Customer[]
+  products       Product[]
+  services       Service[]
+  categories     Category[]
+  collaborators  Collaborator[]
+  promotions     Promotion[]
+  sales          Sale[]
+  settings       Settings?
+  financialTransactions FinancialTransaction[]
+  subscription   Subscription?
+  referral       Referral?
+}
+
+model Customer {
+  id        String   @id @default(uuid())
+  userId    String
+  name      String
+  email     String
+  phone     String?
+  avatarId  String
+  status    String   @default("Ativo")
+  createdAt DateTime @default(now())
+  
+  user  User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  sales Sale[]
+  
+  @@unique([userId, email])
+}
+
+model Category {
+  id       String    @id @default(uuid())
+  userId   String
+  name     String
+  
+  user     User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  products Product[]
+  
+  @@unique([userId, name])
+}
+
+model Product {
+  id            String             @id @default(uuid())
+  userId        String
+  categoryId    String
+  name          String
+  imageUrl      String?
+  imageId       String?
+  sku           String?
+  stock         Int?
+  priceCents    Int?
+  costCents     Int?
+  hasVariations Boolean            @default(false)
+  createdAt     DateTime           @default(now())
+  
+  user       User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  category   Category           @relation(fields: [categoryId], references: [id])
+  variations ProductVariation[]
+  saleItems  SaleItem[]
+  promotions Promotion[]
+  
+  @@unique([userId, sku])
+}
+
+model ProductVariation {
+  id         String   @id @default(uuid())
+  productId  String
+  name       String
+  sku        String?
+  stock      Int
+  priceCents Int
+  costCents  Int?
+  
+  product   Product    @relation(fields: [productId], references: [id], onDelete: Cascade)
+  saleItems SaleItem[]
+}
+
+model Service {
+  id         String      @id @default(uuid())
+  userId     String
+  name       String
+  code       String
+  priceCents Int
+  costCents  Int?
+  imageUrl   String?
+  imageId    String?
+  createdAt  DateTime    @default(now())
+  
+  user       User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  saleItems  SaleItem[]
+  promotions Promotion[]
+  
+  @@unique([userId, code])
+}
+
+model Collaborator {
+  id             String   @id @default(uuid())
+  userId         String
+  name           String
+  pin            String
+  canModifyItems Boolean  @default(false)
+  avatarId       String
+  status         String   @default("Ativo")
+  createdAt      DateTime @default(now())
+  
+  user  User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  sales Sale[]
+}
+
+model Promotion {
+  id        String   @id @default(uuid())
+  userId    String
+  productId String?
+  serviceId String?
+  itemName  String
+  itemType  String
+  discount  Int
+  startDate DateTime
+  endDate   DateTime
+  status    String
+  
+  user    User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  product Product? @relation(fields: [productId], references: [id], onDelete: Cascade)
+  service Service? @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+}
+
+model Sale {
+  id              String   @id @default(uuid())
+  userId          String
+  customerId      String?
+  collaboratorId  String?
+  vendedor        String
+  status          String   @default("Concluída")
+  totalCents      Int
+  subtotalCents   Int
+  feesCents       Int      @default(0)
+  paymentMethod   String
+  installments    Int?
+  createdAt       DateTime @default(now())
+  
+  user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  customer     Customer?     @relation(fields: [customerId], references: [id], onDelete: SetNull)
+  collaborator Collaborator? @relation(fields: [collaboratorId], references: [id], onDelete: SetNull)
+  items        SaleItem[]
+}
+
+model SaleItem {
+  id                   String   @id @default(uuid())
+  saleId               String
+  productId            String?
+  productVariationId   String?
+  serviceId            String?
+  name                 String
+  quantity             Int
+  priceCents           Int
+  originalPriceCents   Int
+  imageUrl             String?
+  promotionId          String?
+  
+  sale              Sale              @relation(fields: [saleId], references: [id], onDelete: Cascade)
+  product           Product?          @relation(fields: [productId], references: [id], onDelete: SetNull)
+  productVariation  ProductVariation? @relation(fields: [productVariationId], references: [id], onDelete: SetNull)
+  service           Service?          @relation(fields: [serviceId], references: [id], onDelete: SetNull)
+}
+
+model Settings {
+  id        String   @id @default(uuid())
+  userId    String   @unique
+  
+  // Theme colors (Light mode)
+  primaryColorLight     String?
+  accentColorLight      String?
+  backgroundColorLight  String?
+  cardColorLight        String?
+  headerColorLight      String?
+  themeNameLight        String   @default("Padrão")
+  
+  // Theme colors (Dark mode)
+  primaryColorDark      String?
+  accentColorDark       String?
+  backgroundColorDark   String?
+  cardColorDark         String?
+  headerColorDark       String?
+  themeNameDark         String   @default("Padrão")
+  
+  // Receipt configuration
+  companyName           String?
+  companyAddress        String?
+  companyCnpj           String?
+  companyPhone          String?
+  
+  // Custom logo
+  customLogoSvg         String?
+  
+  // Payment method rates (JSON string)
+  paymentRates          String?
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model FinancialTransaction {
+  id          String   @id @default(uuid())
+  userId      String
+  description String
+  amount      Int      // Valor em centavos (negativo para despesas)
+  type        String   // "Receita" ou "Despesa"
+  date        DateTime @default(now())
+  createdAt   DateTime @default(now())
+  
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@index([userId, date])
+}
+
+model Subscription {
+  id                    String    @id @default(uuid())
+  userId                String    @unique
+  plan                  String    @default("Free") // "Free", "Plus", "Premium"
+  billingCycle          String    @default("MONTHLY") // "MONTHLY" ou "YEARLY"
+  status                String    @default("TRIAL")  // "TRIAL", "ACTIVE", "EXPIRED", "CANCELLED"
+  startDate             DateTime  @default(now())
+  endDate               DateTime? // Data de término da assinatura
+  trialEndsAt           DateTime? // Data de término do trial (30 dias)
+  cancelledAt           DateTime?
+  
+  // Stripe integration
+  stripeCustomerId      String?   @unique
+  stripeSubscriptionId  String?   @unique
+  stripePriceId         String?   // ID do preço no Stripe
+  stripeCurrentPeriodEnd DateTime?
+  
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+  
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@index([userId])
+  @@index([stripeCustomerId])
+  @@index([stripeSubscriptionId])
+}
+
+model Referral {
+  id                String              @id @default(uuid())
+  userId            String              @unique // Dono do código de indicação
+  referralCode      String              @unique // Código único (ex: CHRONOS-ABC12)
+  referredUsers     Int                 @default(0) // Quantidade de pessoas indicadas
+  commissionEarned  Int                 @default(0) // Total ganho em centavos
+  createdAt         DateTime            @default(now())
+  updatedAt         DateTime            @updatedAt
+  
+  user        User                 @relation(fields: [userId], references: [id], onDelete: Cascade)
+  commissions ReferralCommission[] // Histórico de comissões
+  
+  @@index([userId])
+  @@index([referralCode])
+}
+
+model ReferralCommission {
+  id              String   @id @default(uuid())
+  referralId      String   // ID do Referral (indicador)
+  referredUserId  String   // ID do usuário indicado
+  referredUserEmail String // Email do indicado (para facilitar)
+  plan            String   // Plano contratado (Básico, Profissional)
+  amountCents     Int      // Valor da comissão em centavos
+  status          String   @default("PENDING") // "PENDING", "PAID", "CANCELLED"
+  paidAt          DateTime?
+  createdAt       DateTime @default(now())
+  
+  referral Referral @relation(fields: [referralId], references: [id], onDelete: Cascade)
+  
+  @@index([referralId])
+  @@index([referredUserId])
+}

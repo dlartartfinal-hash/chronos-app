@@ -1,0 +1,784 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>📋 Checklist de Testes - Chronos</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            padding: 30px;
+            background: #f8f9fa;
+            border-bottom: 2px solid #e9ecef;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .stat-card h3 {
+            font-size: 2em;
+            color: #667eea;
+            margin-bottom: 5px;
+        }
+
+        .stat-card p {
+            color: #666;
+            font-size: 0.9em;
+        }
+
+        .business-model {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 20px;
+            margin: 20px 30px;
+            border-radius: 4px;
+        }
+
+        .business-model h3 {
+            color: #856404;
+            margin-bottom: 10px;
+        }
+
+        .business-model ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .business-model li {
+            padding: 5px 0;
+            color: #856404;
+        }
+
+        .business-model li::before {
+            content: "✓ ";
+            font-weight: bold;
+            margin-right: 5px;
+        }
+
+        .nav-tabs {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            padding: 20px 30px;
+            background: #f8f9fa;
+            border-bottom: 2px solid #e9ecef;
+            overflow-x: auto;
+        }
+
+        .nav-tab {
+            padding: 10px 20px;
+            background: white;
+            border: 2px solid #dee2e6;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s;
+            white-space: nowrap;
+            font-weight: 500;
+        }
+
+        .nav-tab:hover {
+            background: #e9ecef;
+        }
+
+        .nav-tab.active {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+
+        .content {
+            padding: 30px;
+        }
+
+        .section {
+            display: none;
+            animation: fadeIn 0.3s;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .module {
+            margin-bottom: 30px;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .module-header {
+            background: #f8f9fa;
+            padding: 15px 20px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: background 0.2s;
+        }
+
+        .module-header:hover {
+            background: #e9ecef;
+        }
+
+        .module-header h3 {
+            color: #495057;
+            font-size: 1.2em;
+        }
+
+        .module-progress {
+            font-size: 0.9em;
+            color: #667eea;
+            font-weight: bold;
+        }
+
+        .module-body {
+            padding: 20px;
+            display: none;
+        }
+
+        .module.expanded .module-body {
+            display: block;
+        }
+
+        .test-item {
+            padding: 12px;
+            margin-bottom: 8px;
+            background: #f8f9fa;
+            border-radius: 6px;
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            transition: all 0.2s;
+        }
+
+        .test-item:hover {
+            background: #e9ecef;
+        }
+
+        .test-item.checked {
+            background: #d4edda;
+            border-left: 4px solid #28a745;
+        }
+
+        .test-item input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            margin-top: 2px;
+        }
+
+        .test-item label {
+            flex: 1;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .test-item.checked label {
+            text-decoration: line-through;
+            color: #666;
+        }
+
+        .sub-item {
+            margin-left: 30px;
+            font-size: 0.95em;
+        }
+
+        .scenario {
+            background: #e7f3ff;
+            border-left: 4px solid #2196F3;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+
+        .scenario h4 {
+            color: #1976D2;
+            margin-bottom: 10px;
+        }
+
+        .scenario ol {
+            margin-left: 20px;
+        }
+
+        .scenario li {
+            margin: 5px 0;
+        }
+
+        .actions {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            display: flex;
+            gap: 10px;
+            z-index: 1000;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(0,0,0,0.2);
+        }
+
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #218838;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(0,0,0,0.2);
+        }
+
+        .btn-warning {
+            background: #ffc107;
+            color: #212529;
+        }
+
+        .btn-warning:hover {
+            background: #e0a800;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(0,0,0,0.2);
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 1.8em;
+            }
+
+            .stats {
+                grid-template-columns: 1fr;
+            }
+
+            .nav-tabs {
+                flex-direction: column;
+            }
+
+            .actions {
+                flex-direction: column;
+                bottom: 10px;
+                right: 10px;
+            }
+        }
+
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+            }
+
+            .container {
+                box-shadow: none;
+            }
+
+            .actions {
+                display: none;
+            }
+
+            .nav-tabs {
+                display: none;
+            }
+
+            .section {
+                display: block !important;
+            }
+
+            .module-body {
+                display: block !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📋 Checklist Completo de Testes - Chronos</h1>
+            <p>Versão 2.0 - Trial de 1 Dia | 16 de novembro de 2025</p>
+        </div>
+
+        <div class="stats">
+            <div class="stat-card">
+                <h3 id="total-tests">220+</h3>
+                <p>Total de Testes</p>
+            </div>
+            <div class="stat-card">
+                <h3 id="completed-tests">0</h3>
+                <p>Testes Concluídos</p>
+            </div>
+            <div class="stat-card">
+                <h3 id="progress-percent">0%</h3>
+                <p>Progresso</p>
+            </div>
+            <div class="stat-card">
+                <h3 id="modules-count">20</h3>
+                <p>Módulos</p>
+            </div>
+        </div>
+
+        <div class="business-model">
+            <h3>💡 Modelo de Negócio</h3>
+            <ul>
+                <li><strong>Trial de 1 Dia:</strong> Todos os novos usuários recebem 1 dia de acesso completo</li>
+                <li><strong>Assinatura Obrigatória:</strong> Após 24 horas, é obrigatório assinar um plano para continuar</li>
+                <li><strong>Sem Plano Gratuito:</strong> Não existe tier gratuito permanente</li>
+                <li><strong>Planos Disponíveis:</strong> Básico, Profissional e Empresarial</li>
+            </ul>
+        </div>
+
+        <div class="nav-tabs">
+            <button class="nav-tab active" onclick="showSection('autenticacao')">1️⃣ Autenticação</button>
+            <button class="nav-tab" onclick="showSection('assinatura')">2️⃣ Assinatura & Trial</button>
+            <button class="nav-tab" onclick="showSection('produtos')">3️⃣ Produtos</button>
+            <button class="nav-tab" onclick="showSection('categorias')">4️⃣ Categorias</button>
+            <button class="nav-tab" onclick="showSection('clientes')">5️⃣ Clientes</button>
+            <button class="nav-tab" onclick="showSection('vendas')">6️⃣ Vendas (PDV)</button>
+            <button class="nav-tab" onclick="showSection('promocoes')">7️⃣ Promoções</button>
+            <button class="nav-tab" onclick="showSection('colaboradores')">8️⃣ Colaboradores</button>
+            <button class="nav-tab" onclick="showSection('financas')">9️⃣ Finanças</button>
+            <button class="nav-tab" onclick="showSection('indique')">🔟 Indique e Ganhe</button>
+            <button class="nav-tab" onclick="showSection('relatorios')">1️⃣1️⃣ Relatórios</button>
+            <button class="nav-tab" onclick="showSection('configuracoes')">1️⃣2️⃣ Configurações</button>
+            <button class="nav-tab" onclick="showSection('stripe')">1️⃣3️⃣ Stripe</button>
+            <button class="nav-tab" onclick="showSection('seguranca')">1️⃣4️⃣ Segurança</button>
+            <button class="nav-tab" onclick="showSection('performance')">1️⃣5️⃣ Performance</button>
+            <button class="nav-tab" onclick="showSection('responsividade')">1️⃣6️⃣ Responsividade</button>
+            <button class="nav-tab" onclick="showSection('navegacao')">1️⃣7️⃣ Navegação</button>
+            <button class="nav-tab" onclick="showSection('notificacoes')">1️⃣8️⃣ Notificações</button>
+            <button class="nav-tab" onclick="showSection('acessibilidade')">1️⃣9️⃣ Acessibilidade</button>
+            <button class="nav-tab" onclick="showSection('integridade')">2️⃣0️⃣ Integridade</button>
+            <button class="nav-tab" onclick="showSection('cenarios')">🎯 Cenários Críticos</button>
+        </div>
+
+        <div class="content">
+            <!-- Autenticação -->
+            <div id="autenticacao" class="section active">
+                <h2>1️⃣ TESTES DE AUTENTICAÇÃO</h2>
+                
+                <div class="module">
+                    <div class="module-header" onclick="toggleModule(this)">
+                        <h3>1.1 Registro de Novo Usuário (SEM Indicação)</h3>
+                        <span class="module-progress">0/10</span>
+                    </div>
+                    <div class="module-body">
+                        <div class="test-item"><input type="checkbox"><label>Acessar página de registro</label></div>
+                        <div class="test-item"><input type="checkbox"><label>Preencher dados mínimos obrigatórios</label></div>
+                        <div class="test-item sub-item"><input type="checkbox"><label>Nome completo</label></div>
+                        <div class="test-item sub-item"><input type="checkbox"><label>E-mail válido</label></div>
+                        <div class="test-item sub-item"><input type="checkbox"><label>Senha (mínimo 6 caracteres)</label></div>
+                        <div class="test-item"><input type="checkbox"><label>Validar que código de indicação está vazio</label></div>
+                        <div class="test-item"><input type="checkbox"><label>Clicar em "Criar Conta"</label></div>
+                        <div class="test-item"><input type="checkbox"><label>✅ Verificar criação do usuário no banco</label></div>
+                        <div class="test-item"><input type="checkbox"><label>✅ Verificar que `trialEndsAt` foi definido (data atual + 1 dia)</label></div>
+                        <div class="test-item"><input type="checkbox"><label>✅ Verificar que não há registro em `Referral`</label></div>
+                        <div class="test-item"><input type="checkbox"><label>✅ Verificar redirecionamento para `/dashboard`</label></div>
+                        <div class="test-item"><input type="checkbox"><label>✅ Verificar que assinatura é NULL (período de trial)</label></div>
+                    </div>
+                </div>
+
+                <div class="module">
+                    <div class="module-header" onclick="toggleModule(this)">
+                        <h3>1.2 Registro de Novo Usuário (COM Indicação Válida)</h3>
+                        <span class="module-progress">0/9</span>
+                    </div>
+                    <div class="module-body">
+                        <div class="test-item"><input type="checkbox"><label>Obter código de indicação válido (ex: `CHRONOS-12345`)</label></div>
+                        <div class="test-item"><input type="checkbox"><label>Acessar `/register?ref=CHRONOS-12345`</label></div>
+                        <div class="test-item"><input type="checkbox"><label>✅ Verificar que campo de código está preenchido</label></div>
+                        <div class="test-item"><input type="checkbox"><label>✅ Verificar que campo está desabilitado (readonly)</label></div>
+                        <div class="test-item"><input type="checkbox"><label>Preencher dados do usuário</label></div>
+                        <div class="test-item"><input type="checkbox"><label>Criar conta</label></div>
+                        <div class="test-item"><input type="checkbox"><label>✅ Verificar criação do usuário</label></div>
+                        <div class="test-item"><input type="checkbox"><label>✅ Verificar criação de registro em `Referral`</label></div>
+                        <div class="test-item"><input type="checkbox"><label>✅ Verificar que indicador NÃO recebeu crédito ainda</label></div>
+                    </div>
+                </div>
+
+                <div class="module">
+                    <div class="module-header" onclick="toggleModule(this)">
+                        <h3>1.3 Registro com Código Inválido</h3>
+                        <span class="module-progress">0/3</span>
+                    </div>
+                    <div class="module-body">
+                        <div class="test-item"><input type="checkbox"><label>Acessar `/register?ref=CODIGO-INVALIDO`</label></div>
+                        <div class="test-item"><input type="checkbox"><label>Tentar criar conta</label></div>
+                        <div class="test-item"><input type="checkbox"><label>✅ Verificar mensagem de erro sobre código inválido</label></div>
+                        <div class="test-item"><input type="checkbox"><label>✅ Verificar que conta NÃO foi criada</label></div>
+                    </div>
+                </div>
+
+                <div class="module">
+                    <div class="module-header" onclick="toggleModule(this)">
+                        <h3>1.4 Login</h3>
+                        <span class="module-progress">0/5</span>
+                    </div>
+                    <div class="module-body">
+                        <div class="test-item"><input type="checkbox"><label>Acessar `/login`</label></div>
+                        <div class="test-item"><input type="checkbox"><label>Tentar login com credenciais incorretas</label></div>
+                        <div class="test-item"><input type="checkbox"><label>✅ Verificar mensagem de erro</label></div>
+                        <div class="test-item"><input type="checkbox"><label>Fazer login com credenciais corretas</label></div>
+                        <div class="test-item"><input type="checkbox"><label>✅ Verificar redirecionamento para `/dashboard`</label></div>
+                        <div class="test-item"><input type="checkbox"><label>✅ Verificar sessão ativa</label></div>
+                    </div>
+                </div>
+
+                <div class="module">
+                    <div class="module-header" onclick="toggleModule(this)">
+                        <h3>1.5 Logout</h3>
+                        <span class="module-progress">0/4</span>
+                    </div>
+                    <div class="module-body">
+                        <div class="test-item"><input type="checkbox"><label>Clicar em "Sair" no menu</label></div>
+                        <div class="test-item"><input type="checkbox"><label>✅ Verificar redirecionamento para `/login`</label></div>
+                        <div class="test-item"><input type="checkbox"><label>✅ Verificar que sessão foi encerrada</label></div>
+                        <div class="test-item"><input type="checkbox"><label>Tentar acessar `/dashboard` sem login</label></div>
+                        <div class="test-item"><input type="checkbox"><label>✅ Verificar redirecionamento para `/login`</label></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Assinatura & Trial -->
+            <div id="assinatura" class="section">
+                <h2>2️⃣ TESTES DE ASSINATURA E SISTEMA DE TRIAL</h2>
+                
+                <div class="module">
+                    <div class="module-header" onclick="toggleModule(this)">
+                        <h3>2.1 Usuário em Período de Trial</h3>
+                        <span class="module-progress">0/6</span>
+                    </div>
+                    <div class="module-body">
+                        <div class="test-item"><input type="checkbox"><label>Logar com usuário sem assinatura (trial ativo)</label></div>
+                        <div class="test-item"><input type="checkbox"><label>Acessar `/dashboard/assinatura`</label></div>
+                        <div class="test-item"><input type="checkbox"><label>✅ Verificar exibição do alerta de trial com contador regressivo</label></div>
+                        <div class="test-item"><input type="checkbox"><label>✅ Verificar tempo restante do trial sendo exibido</label></div>
+                        <div class="test-item"><input type="checkbox"><label>✅ Verificar exibição dos 3 planos (Básico, Profissional, Empresarial)</label></div>
+                        <div class="test-item"><input type="checkbox"><label>✅ Verificar mensagem informando que trial expira em X horas</label></div>
+                    </div>
+                </div>
+
+                <div class="module">
+                    <div class="module-header" onclick="toggleModule(this)">
+                        <h3>2.7.1 Verificação de Trial Ativo</h3>
+                        <span class="module-progress">0/6</span>
+                    </div>
+                    <div class="module-body">
+                        <div class="test-item"><input type="checkbox"><label>Criar novo usuário</label></div>
+                        <div class="test-item"><input type="checkbox"><label>✅ Verificar que `trialEndsAt` está definido (agora + 24h)</label></div>
+                        <div class="test-item"><input type="checkbox"><label>Acessar dashboard</label></div>
+                        <div class="test-item"><input type="checkbox"><label>✅ Verificar acesso completo a todas as funcionalidades</label></div>
+                        <div class="test-item"><input type="checkbox"><label>Acessar `/dashboard/assinatura`</label></div>
+                        <div class="test-item"><input type="checkbox"><label>✅ Verificar alerta exibindo tempo restante de trial</label></div>
+                        <div class="test-item"><input type="checkbox"><label>✅ Verificar contador regressivo funcionando (atualiza a cada segundo)</label></div>
+                    </div>
+                </div>
+
+                <div class="module">
+                    <div class="module-header" onclick="toggleModule(this)">
+                        <h3>2.7.3 Trial Expirado (Sem Assinatura)</h3>
+                        <span class="module-progress">0/6</span>
+                    </div>
+                    <div class="module-body">
+                        <div class="test-item"><input type="checkbox"><label>Modificar `trialEndsAt` no banco para data passada</label></div>
+                        <div class="test-item"><input type="checkbox"><label>Tentar acessar `/dashboard`</label></div>
+                        <div class="test-item"><input type="checkbox"><label>✅ Verificar redirecionamento automático para `/dashboard/assinatura`</label></div>
+                        <div class="test-item"><input type="checkbox"><label>Tentar acessar outras páginas do dashboard</label></div>
+                        <div class="test-item"><input type="checkbox"><label>✅ Verificar que TODAS redirecionam para assinatura</label></div>
+                        <div class="test-item"><input type="checkbox"><label>✅ Verificar alerta vermelho informando que trial expirou</label></div>
+                        <div class="test-item"><input type="checkbox"><label>✅ Verificar que não consegue acessar funcionalidades</label></div>
+                    </div>
+                </div>
+
+                <div class="module">
+                    <div class="module-header" onclick="toggleModule(this)">
+                        <h3>2.2 Contratar Plano Profissional</h3>
+                        <span class="module-progress">0/6</span>
+                    </div>
+                    <div class="module-body">
+                        <div class="test-item"><input type="checkbox"><label>Clicar em "Assinar" no plano Profissional</label></div>
+                        <div class="test-item"><input type="checkbox"><label>✅ Verificar redirecionamento para Stripe Checkout</label></div>
+                        <div class="test-item"><input type="checkbox"><label>Preencher dados de pagamento (cartão: 4242 4242 4242 4242)</label></div>
+                        <div class="test-item"><input type="checkbox"><label>Concluir pagamento</label></div>
+                        <div class="test-item"><input type="checkbox"><label>✅ Verificar redirecionamento para `/dashboard/assinatura/sucesso`</label></div>
+                        <div class="test-item"><input type="checkbox"><label>✅ Verificar criação de registro em `Subscription`</label></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Cenários Críticos -->
+            <div id="cenarios" class="section">
+                <h2>🎯 CENÁRIOS CRÍTICOS DE NEGÓCIO</h2>
+
+                <div class="scenario">
+                    <h4>Cenário 1: Primeiro Usuário (Trial de 1 Dia)</h4>
+                    <ol>
+                        <li>✅ Criar conta sem código</li>
+                        <li>✅ Verificar que recebeu trial de 24 horas</li>
+                        <li>✅ Criar produtos e categorias durante o trial</li>
+                        <li>✅ Fazer primeira venda</li>
+                        <li>✅ Verificar acesso completo durante o trial</li>
+                        <li>✅ Ver contador de trial na página de assinatura</li>
+                        <li>✅ Após 24h, verificar bloqueio e necessidade de assinatura</li>
+                    </ol>
+                </div>
+
+                <div class="scenario">
+                    <h4>Cenário 2: Usuário Indicado → Trial → Assinante Profissional</h4>
+                    <ol>
+                        <li>✅ Criar conta com código de indicação</li>
+                        <li>✅ Receber trial de 1 dia automático</li>
+                        <li>✅ Verificar status "pendente" no indicador</li>
+                        <li>✅ Usar sistema durante trial</li>
+                        <li>✅ Assinar plano Profissional antes do trial expirar</li>
+                        <li>✅ Indicador recebe R$ 50 imediatamente</li>
+                        <li>✅ Status do referral muda para "completed"</li>
+                        <li>✅ Fazer múltiplas vendas usando recursos do plano</li>
+                    </ol>
+                </div>
+
+                <div class="scenario">
+                    <h4>Cenário 3: Loja Completa com Vendedores</h4>
+                    <ol>
+                        <li>✅ Proprietário cria 3 colaboradores</li>
+                        <li>✅ Configura comissões diferentes (5%, 7%, 10%)</li>
+                        <li>✅ Cada vendedor faz vendas no seu modo</li>
+                        <li>✅ Verificar cálculo correto de todas as comissões</li>
+                        <li>✅ Gerar relatório de comissões</li>
+                        <li>✅ Proprietário verifica lucro líquido</li>
+                    </ol>
+                </div>
+
+                <div class="scenario">
+                    <h4>Cenário 4: Promoção de Black Friday</h4>
+                    <ol>
+                        <li>✅ Criar múltiplas promoções (categoria, produto, global)</li>
+                        <li>✅ Configurar datas de início e fim</li>
+                        <li>✅ Fazer vendas durante promoção</li>
+                        <li>✅ Verificar aplicação correta de descontos</li>
+                        <li>✅ Após fim, verificar que promoções não se aplicam mais</li>
+                        <li>✅ Gerar relatório de impacto das promoções</li>
+                    </ol>
+                </div>
+            </div>
+
+            <!-- Placeholder para outras seções -->
+            <div id="produtos" class="section"><h2>3️⃣ TESTES DE PRODUTOS E SERVIÇOS</h2><p>Seção em desenvolvimento...</p></div>
+            <div id="categorias" class="section"><h2>4️⃣ TESTES DE CATEGORIAS</h2><p>Seção em desenvolvimento...</p></div>
+            <div id="clientes" class="section"><h2>5️⃣ TESTES DE CLIENTES</h2><p>Seção em desenvolvimento...</p></div>
+            <div id="vendas" class="section"><h2>6️⃣ TESTES DE VENDAS (PDV)</h2><p>Seção em desenvolvimento...</p></div>
+            <div id="promocoes" class="section"><h2>7️⃣ TESTES DE PROMOÇÕES</h2><p>Seção em desenvolvimento...</p></div>
+            <div id="colaboradores" class="section"><h2>8️⃣ TESTES DE COLABORADORES</h2><p>Seção em desenvolvimento...</p></div>
+            <div id="financas" class="section"><h2>9️⃣ TESTES DE FINANÇAS</h2><p>Seção em desenvolvimento...</p></div>
+            <div id="indique" class="section"><h2>🔟 TESTES DE INDIQUE E GANHE</h2><p>Seção em desenvolvimento...</p></div>
+            <div id="relatorios" class="section"><h2>1️⃣1️⃣ TESTES DE RELATÓRIOS</h2><p>Seção em desenvolvimento...</p></div>
+            <div id="configuracoes" class="section"><h2>1️⃣2️⃣ TESTES DE CONFIGURAÇÕES</h2><p>Seção em desenvolvimento...</p></div>
+            <div id="stripe" class="section"><h2>1️⃣3️⃣ TESTES DE INTEGRAÇÃO STRIPE</h2><p>Seção em desenvolvimento...</p></div>
+            <div id="seguranca" class="section"><h2>1️⃣4️⃣ TESTES DE SEGURANÇA</h2><p>Seção em desenvolvimento...</p></div>
+            <div id="performance" class="section"><h2>1️⃣5️⃣ TESTES DE PERFORMANCE</h2><p>Seção em desenvolvimento...</p></div>
+            <div id="responsividade" class="section"><h2>1️⃣6️⃣ TESTES DE RESPONSIVIDADE</h2><p>Seção em desenvolvimento...</p></div>
+            <div id="navegacao" class="section"><h2>1️⃣7️⃣ TESTES DE NAVEGAÇÃO</h2><p>Seção em desenvolvimento...</p></div>
+            <div id="notificacoes" class="section"><h2>1️⃣8️⃣ TESTES DE NOTIFICAÇÕES</h2><p>Seção em desenvolvimento...</p></div>
+            <div id="acessibilidade" class="section"><h2>1️⃣9️⃣ TESTES DE ACESSIBILIDADE</h2><p>Seção em desenvolvimento...</p></div>
+            <div id="integridade" class="section"><h2>2️⃣0️⃣ TESTES DE DADOS E INTEGRIDADE</h2><p>Seção em desenvolvimento...</p></div>
+        </div>
+    </div>
+
+    <div class="actions">
+        <button class="btn btn-success" onclick="saveProgress()">💾 Salvar Progresso</button>
+        <button class="btn btn-warning" onclick="loadProgress()">📥 Carregar Progresso</button>
+        <button class="btn btn-primary" onclick="window.print()">🖨️ Imprimir</button>
+    </div>
+
+    <script>
+        // Toggle module expansion
+        function toggleModule(header) {
+            const module = header.parentElement;
+            module.classList.toggle('expanded');
+        }
+
+        // Show specific section
+        function showSection(sectionId) {
+            // Hide all sections
+            document.querySelectorAll('.section').forEach(section => {
+                section.classList.remove('active');
+            });
+            
+            // Remove active class from all tabs
+            document.querySelectorAll('.nav-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Show selected section
+            document.getElementById(sectionId).classList.add('active');
+            
+            // Add active class to clicked tab
+            event.target.classList.add('active');
+        }
+
+        // Handle checkbox changes
+        document.addEventListener('change', function(e) {
+            if (e.target.type === 'checkbox') {
+                const testItem = e.target.closest('.test-item');
+                if (e.target.checked) {
+                    testItem.classList.add('checked');
+                } else {
+                    testItem.classList.remove('checked');
+                }
+                
+                updateModuleProgress(testItem.closest('.module'));
+                updateGlobalStats();
+            }
+        });
+
+        // Update module progress
+        function updateModuleProgress(module) {
+            const checkboxes = module.querySelectorAll('input[type="checkbox"]');
+            const checked = module.querySelectorAll('input[type="checkbox"]:checked').length;
+            const total = checkboxes.length;
+            const progressSpan = module.querySelector('.module-progress');
+            if (progressSpan) {
+                progressSpan.textContent = `${checked}/${total}`;
+            }
+        }
+
+        // Update global statistics
+        function updateGlobalStats() {
+            const allCheckboxes = document.querySelectorAll('input[type="checkbox"]');
+            const checkedBoxes = document.querySelectorAll('input[type="checkbox"]:checked');
+            const total = allCheckboxes.length;
+            const completed = checkedBoxes.length;
+            const percentage = total > 0 ? Math.round((completed / total) * 100) : 0;
+            
+            document.getElementById('completed-tests').textContent = completed;
+            document.getElementById('progress-percent').textContent = percentage + '%';
+        }
+
+        // Save progress to localStorage
+        function saveProgress() {
+            const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+            const progress = [];
+            
+            checkboxes.forEach((checkbox, index) => {
+                progress.push({
+                    index: index,
+                    checked: checkbox.checked
+                });
+            });
+            
+            localStorage.setItem('chronos-checklist-progress', JSON.stringify(progress));
+            alert('✅ Progresso salvo com sucesso!');
+        }
+
+        // Load progress from localStorage
+        function loadProgress() {
+            const saved = localStorage.getItem('chronos-checklist-progress');
+            if (!saved) {
+                alert('❌ Nenhum progresso salvo encontrado.');
+                return;
+            }
+            
+            const progress = JSON.parse(saved);
+            const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+            
+            progress.forEach(item => {
+                if (checkboxes[item.index]) {
+                    checkboxes[item.index].checked = item.checked;
+                    const testItem = checkboxes[item.index].closest('.test-item');
+                    if (item.checked) {
+                        testItem.classList.add('checked');
+                    }
+                }
+            });
+            
+            // Update all module progress
+            document.querySelectorAll('.module').forEach(module => {
+                updateModuleProgress(module);
+            });
+            
+            updateGlobalStats();
+            alert('✅ Progresso carregado com sucesso!');
+        }
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            // Try to load saved progress
+            if (localStorage.getItem('chronos-checklist-progress')) {
+                if (confirm('Foi encontrado um progresso salvo. Deseja carregar?')) {
+                    loadProgress();
+                }
+            }
+            
+            // Update all module progress on load
+            document.querySelectorAll('.module').forEach(module => {
+                updateModuleProgress(module);
+            });
+        });
+    </script>
+</body>
+</html>
