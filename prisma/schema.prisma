@@ -13,6 +13,7 @@ model User {
   name      String
   password  String   @default("")
   ownerPin  String   @default("")
+  isAdmin   Boolean  @default(false) // Acesso ao painel administrativo
   referredBy String? // Código de quem indicou este usuário
   trialEndsAt DateTime? // Data de expiração do trial (1 dia após criação)
   createdAt DateTime @default(now())
