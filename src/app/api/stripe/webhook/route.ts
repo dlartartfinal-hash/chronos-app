@@ -203,7 +203,87 @@ async function handlePaymentSucceeded(invoice: any) {
     },
   });
 
-  console.log(`Pagamento recebido para user ${userId}`);
+  console.log(`✅ Pagamento recebido para user ${userId}`);
+
+  // Verificar se é o 2º pagamento de plano MENSAL para criar segunda comissão
+  await processSecondMonthlyCommission(userId, subscription);
+}
+
+// Processar segunda comissão (50% do 2º mês) para planos mensais
+async function processSecondMonthlyCommission(userId: string, subscription: any) {
+  try {
+    // Buscar usuário
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+      select: { email: true, referredBy: true },
+    });
+
+    if (!user || !user.referredBy) return;
+
+    // Buscar referral
+    const referral = await prisma.referral.findUnique({
+      where: { referralCode: user.referredBy },
+    });
+
+    if (!referral) return;
+
+    // Verificar se já criou a segunda comissão
+    const existingSecondCommission = await prisma.referralCommission.findFirst({
+      where: {
+        referralId: referral.id,
+        referredUserId: userId,
+        plan: { contains: '2ª parcela' },
+      },
+    });
+
+    if (existingSecondCommission) {
+      // Já criou a segunda comissão
+      return;
+    }
+
+    // Verificar quantas faturas foram pagas (invoice count)
+    const invoices = await stripe.invoices.list({
+      subscription: subscription.id,
+      status: 'paid',
+      limit: 100,
+    });
+
+    const paidInvoicesCount = invoices.data.length;
+
+    // Se é o 2º pagamento ou mais, criar segunda comissão (só uma vez)
+    if (paidInvoicesCount >= 2) {
+      const plan = subscription.metadata.plan;
+      const billingCycle = subscription.metadata.billingCycle;
+
+      // Só para planos mensais
+      if (billingCycle !== 'MONTHLY') return;
+
+      const planPrices: Record<string, number> = {
+        'Básico': 2990,
+        'Profissional': 5989,
+      };
+
+      const planPrice = planPrices[plan] || 0;
+      if (planPrice === 0) return;
+
+      const secondCommission = Math.floor(planPrice * 0.5); // 50%
+
+      await prisma.referralCommission.create({
+        data: {
+          referralId: referral.id,
+          referredUserId: userId,
+          referredUserEmail: user.email,
+          plan: `${plan} - Mensal (2ª parcela)`,
+          amountCents: secondCommission,
+          status: 'PENDING',
+        },
+      });
+
+      console.log(`💰 Segunda comissão mensal criada: ${secondCommission / 100} (50% do 2º mês)`);
+    }
+  } catch (error) {
+    console.error('Erro ao processar segunda comissão:', error);
+  }
 }
 
 // Processar comissão de indicação
@@ -230,41 +310,71 @@ async function processReferralCommission(userId: string, plan: string, billingCy
       return;
     }
 
-    // Calcular comissão (valor do primeiro mês)
+    // Valores dos planos em centavos
     const planPrices: Record<string, number> = {
-      'Básico': 2990, // R$ 29,90 em centavos
-      'Profissional': 5989, // R$ 59,89 em centavos
+      'Básico': 2990, // R$ 29,90
+      'Profissional': 5989, // R$ 59,89
     };
 
-    const commissionAmount = planPrices[plan] || 0;
+    const planPrice = planPrices[plan] || 0;
 
-    if (commissionAmount === 0) {
+    if (planPrice === 0) {
       // Não há comissão para este plano (ex: Empresarial)
       return;
     }
 
-    // Criar registro de comissão
-    await prisma.referralCommission.create({
-      data: {
-        referralId: referral.id,
-        referredUserId: userId,
-        referredUserEmail: user.email,
-        plan,
-        amountCents: commissionAmount,
-        status: 'PENDING', // Será pago após o primeiro pagamento real
-      },
-    });
+    // NOVA LÓGICA DE COMISSÃO:
+    // MENSAL: 50% no 1º pagamento, 50% no 2º pagamento
+    // ANUAL: 10% do valor total no 1º pagamento
+    
+    if (billingCycle === 'MONTHLY') {
+      // Plano Mensal: 50% agora (será pago após 1º mês real)
+      const firstCommission = Math.floor(planPrice * 0.5); // 50%
+      
+      await prisma.referralCommission.create({
+        data: {
+          referralId: referral.id,
+          referredUserId: userId,
+          referredUserEmail: user.email,
+          plan: `${plan} - Mensal (1ª parcela)`,
+          amountCents: firstCommission,
+          status: 'PENDING', // Será pago após o 1º pagamento real (pós-trial)
+        },
+      });
+
+      // Segunda comissão será criada quando houver o 2º pagamento (via invoice.payment_succeeded)
+      
+      console.log(`💰 Comissão mensal criada: ${firstCommission / 100} (50% do 1º mês)`);
+      
+    } else if (billingCycle === 'YEARLY') {
+      // Plano Anual: 10% do valor total
+      const yearlyPrice = planPrice * 12 * 0.8; // Preço anual (20% de desconto)
+      const commission = Math.floor(yearlyPrice * 0.1); // 10%
+      
+      await prisma.referralCommission.create({
+        data: {
+          referralId: referral.id,
+          referredUserId: userId,
+          referredUserEmail: user.email,
+          plan: `${plan} - Anual`,
+          amountCents: commission,
+          status: 'PENDING', // Será pago após o 1º pagamento real
+        },
+      });
+      
+      console.log(`💰 Comissão anual criada: ${commission / 100} (10% do valor anual)`);
+    }
 
     // Atualizar contadores do Referral
+    // Nota: commissionEarned será atualizado quando as comissões forem pagas
     await prisma.referral.update({
       where: { id: referral.id },
       data: {
         referredUsers: { increment: 1 },
-        commissionEarned: { increment: commissionAmount },
       },
     });
 
-    console.log(`Comissão criada: ${commissionAmount} centavos para referral ${referral.id}`);
+    console.log(`✅ Comissão de indicação processada para referral ${referral.id}`);
   } catch (error) {
     console.error('Erro ao processar comissão de indicação:', error);
   }
