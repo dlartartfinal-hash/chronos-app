@@ -92,8 +92,8 @@ export default function AssinaturaPage() {
         try {
             setIsUpdating(true);
             
-            // Se já tem assinatura ativa com Stripe, fazer upgrade/downgrade
-            if (subscription?.stripeSubscriptionId) {
+            // Se já tem assinatura ativa com Stripe E não está cancelada, fazer upgrade/downgrade
+            if (subscription?.stripeSubscriptionId && subscription?.status !== 'CANCELLED') {
                 const response = await fetch('/api/stripe/update-subscription', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -117,7 +117,7 @@ export default function AssinaturaPage() {
                     throw new Error(data.error || 'Erro ao atualizar plano');
                 }
             } else {
-                // Nova assinatura - redirecionar para checkout Stripe
+                // Nova assinatura OU assinatura cancelada - redirecionar para checkout Stripe
                 const response = await fetch('/api/stripe/create-checkout', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -134,7 +134,7 @@ export default function AssinaturaPage() {
                     // Redirecionar para checkout do Stripe
                     window.location.href = data.url;
                 } else {
-                    throw new Error('URL de checkout não encontrada');
+                    throw new Error(data.error || 'URL de checkout não encontrada');
                 }
             }
         } catch (error: any) {

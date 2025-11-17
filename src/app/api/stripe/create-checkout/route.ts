@@ -24,10 +24,10 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Usuário não encontrado' }, { status: 404 });
     }
 
-    // Verificar se já tem assinatura ativa
+    // Verificar se já tem assinatura ativa (não cancelada)
     if (user.subscription && (user.subscription.status === 'ACTIVE' || user.subscription.status === 'TRIAL')) {
       return NextResponse.json({ 
-        error: 'Você já possui uma assinatura ativa. Cancele a atual antes de criar uma nova.',
+        error: 'Você já possui uma assinatura ativa. Para alterar o plano, use a opção de upgrade/downgrade.',
         currentPlan: user.subscription.plan,
         status: user.subscription.status,
       }, { status: 400 });
