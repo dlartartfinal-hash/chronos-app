@@ -39,6 +39,7 @@ import { Collapsible, CollapsibleTrigger, CollapsibleContent } from '@/component
 import { TrialGuard } from '@/components/trial-guard';
 import { TourGuide, TourHelpButton } from '@/components/tour-guide';
 import { AuthGuard } from '@/components/auth-guard';
+import { SetupOwnerPinDialog } from '@/components/dashboard/setup-owner-pin-dialog';
 
 export default function DashboardLayout({
   children,
@@ -46,9 +47,42 @@ export default function DashboardLayout({
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
-  const { isSellerMode, profileAuthenticated } = useSellerMode();
+  const { isSellerMode, profileAuthenticated, ownerPin, setOwnerPin } = useSellerMode();
   const [isClient, setIsClient] = useState(false);
   const [isFinanceOpen, setIsFinanceOpen] = useState(false);
+  const [showSetupPin, setShowSetupPin] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+  
+  // Check if owner PIN needs to be set up on first login
+  useEffect(() => {
+    if (isClient && profileAuthenticated && !ownerPin) {
+      // Fetch owner PIN from database
+      const checkOwnerPin = async () => {
+        try {
+          const response = await fetch('/api/auth/me');
+          if (response.ok) {
+            const data = await response.json();
+            if (!data.user.ownerPin) {
+              setShowSetupPin(true);
+            } else {
+              setOwnerPin(data.user.ownerPin);
+            }
+          }
+        } catch (error) {
+          console.error('Error checking owner PIN:', error);
+        }
+      };
+      checkOwnerPin();
+    }
+  }, [isClient, profileAuthenticated, ownerPin, setOwnerPin]);
+  
+  const handlePinSetupComplete = (pin: string) => {
+    setOwnerPin(pin);
+    setShowSetupPin(false);
+  };
 
 
   useEffect(() => {
@@ -249,6 +283,7 @@ export default function DashboardLayout({
         <main key={pathname} className="flex-1 overflow-auto space-y-4 p-4 pt-6 md:p-8 animate-fade-in-up">{children}</main>
         <TourGuide />
         <TourHelpButton />
+        <SetupOwnerPinDialog open={showSetupPin} onComplete={handlePinSetupComplete} />
       </div>
       </TrialGuard>
     </AuthGuard>
