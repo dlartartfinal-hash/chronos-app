@@ -3,8 +3,8 @@
     {
       "id": "user-avatar-1",
       "description": "User avatar",
-      "imageUrl": "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw2fHxwZXJzb24lMjBwb3J0cmFpdHxlbnwwfHx8fDE3NjI4MDgwNTN8MA&ixlib=rb-4.1.0&q=80&w=1080",
-      "imageHint": "person portrait"
+      "imageUrl": "https://api.dicebear.com/7.x/avataaars/svg?seed=Felix&backgroundColor=b6e3f4",
+      "imageHint": "illustrated avatar"
     },
     {
       "id": "product-image-1",
@@ -63,56 +63,56 @@
     {
       "id": "user-sales-1",
       "description": "Avatar for Olivia Martin",
-      "imageUrl": "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxMHx8d29tYW4lMjBwb3J0cmFpdHxlbnwwfHx8fDE3NjI4MDAwNzN8MA&ixlib=rb-4.1.0&q=80&w=1080",
-      "imageHint": "woman portrait"
+      "imageUrl": "https://api.dicebear.com/7.x/avataaars/svg?seed=Olivia&backgroundColor=c0aede",
+      "imageHint": "illustrated avatar"
     },
     {
       "id": "user-sales-2",
       "description": "Avatar for Jackson Lee",
-      "imageUrl": "https://images.unsplash.com/photo-1607031542107-f6f46b5d54e9?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw0fHxtYW4lMjBwb3J0cmFpdHxlbnwwfHx8fDE3NjI4NTg1MjJ8MA&ixlib=rb-4.1.0&q=80&w=1080",
-      "imageHint": "man portrait"
+      "imageUrl": "https://api.dicebear.com/7.x/avataaars/svg?seed=Jackson&backgroundColor=ffd5dc",
+      "imageHint": "illustrated avatar"
     },
     {
       "id": "user-sales-3",
       "description": "Avatar for Isabella Nguyen",
-      "imageUrl": "https://images.unsplash.com/photo-1592621385612-4d7129426394?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwzfHx3b21hbiUyMHBvcnRyYWl0fGVufDB8fHx8MTc2MjgwMDA3M3ww&ixlib=rb-4.1.0&q=80&w=1080",
-      "imageHint": "woman portrait"
+      "imageUrl": "https://api.dicebear.com/7.x/avataaars/svg?seed=Isabella&backgroundColor=ffdfbf",
+      "imageHint": "illustrated avatar"
     },
     {
       "id": "user-sales-4",
       "description": "Avatar for William Kim",
-      "imageUrl": "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxtYW4lMjBwb3J0cmFpdHxlbnwwfHx8fDE3NjI4NTg1MjJ8MA&ixlib=rb-4.1.0&q=80&w=1080",
-      "imageHint": "man portrait"
+      "imageUrl": "https://api.dicebear.com/7.x/avataaars/svg?seed=William&backgroundColor=d1d4f9",
+      "imageHint": "illustrated avatar"
     },
     {
       "id": "user-sales-5",
       "description": "Avatar for Sofia Davis",
-      "imageUrl": "https://images.unsplash.com/photo-1557053908-4793c484d06f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw0fHx3b21hbiUyMHBvcnRyYWl0fGVufDB8fHx8MTc2MjgwMDA3M3ww&ixlib=rb-4.1.0&q=80&w=1080",
-      "imageHint": "woman portrait"
+      "imageUrl": "https://api.dicebear.com/7.x/avataaars/svg?seed=Sofia&backgroundColor=b6e3f4",
+      "imageHint": "illustrated avatar"
     },
     {
       "id": "user-generic-1",
       "description": "Generic user avatar",
-      "imageUrl": "https://images.unsplash.com/photo-1494790108377-be9c29b29330?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxwb3J0cmFpdHxlbnwwfHx8fDE3NjM2NTg0NTV8MA&ixlib=rb-4.1.0&q=80&w=1080",
-      "imageHint": "portrait"
+      "imageUrl": "https://api.dicebear.com/7.x/avataaars/svg?seed=Aneka&backgroundColor=c0aede",
+      "imageHint": "illustrated avatar"
     },
     {
       "id": "user-generic-2",
       "description": "Generic user avatar",
-      "imageUrl": "https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw4fHxwb3J0cmFpdHxlbnwwfHx8fDE3NjM2NTg0NTV8MA&ixlib=rb-4.1.0&q=80&w=1080",
-      "imageHint": "portrait"
+      "imageUrl": "https://api.dicebear.com/7.x/avataaars/svg?seed=Max&backgroundColor=ffd5dc",
+      "imageHint": "illustrated avatar"
     },
     {
       "id": "user-generic-3",
       "description": "Generic user avatar",
-      "imageUrl": "https://images.unsplash.com/photo-1580489944761-15a19d654956?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxMnx8cG9ydHJhaXR8ZW58MHx8fHwxNzYzNjU4NDU1fDA&ixlib=rb-4.1.0&q=80&w=1080",
-      "imageHint": "portrait"
+      "imageUrl": "https://api.dicebear.com/7.x/avataaars/svg?seed=Luna&backgroundColor=ffdfbf",
+      "imageHint": "illustrated avatar"
     },
     {
       "id": "user-generic-4",
       "description": "Generic user avatar",
-      "imageUrl": "https://images.unsplash.com/photo-1521119989659-a83eee488004?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxN3x8cG9ydHJhaXR8ZW58MHx8fHwxNzYzNjU4NDU1fDA&ixlib=rb-4.1.0&q=80&w=1080",
-      "imageHint": "portrait"
+      "imageUrl": "https://api.dicebear.com/7.x/avataaars/svg?seed=Charlie&backgroundColor=d1d4f9",
+      "imageHint": "illustrated avatar"
     }
   ]
 }
