@@ -38,6 +38,7 @@ import { useEffect, useState } from 'react';
 import { Collapsible, CollapsibleTrigger, CollapsibleContent } from '@/components/ui/collapsible';
 import { TrialGuard } from '@/components/trial-guard';
 import { TourGuide, TourHelpButton } from '@/components/tour-guide';
+import { AuthGuard } from '@/components/auth-guard';
 
 export default function DashboardLayout({
   children,
@@ -136,17 +137,18 @@ export default function DashboardLayout({
   
   if (isSellerMode) {
     return (
-      <>
+      <AuthGuard>
         <AppHeader />
         <main key={pathname} className="flex-1 overflow-auto space-y-4 p-4 pt-6 md:p-8 animate-fade-in-up">{children}</main>
-      </>
+      </AuthGuard>
     );
   }
 
   // On the client, check if a profile has been authenticated. If not, show the selection dialog.
   if (isClient && !profileAuthenticated) {
     return (
-      <div className="flex h-screen w-screen items-center justify-center bg-background">
+      <AuthGuard>
+        <div className="flex h-screen w-screen items-center justify-center bg-background">
         <ModoVendedorDialog open={true} onOpenChange={(open) => {
           // If the dialog is closed without authentication, we don't grant access.
           // The `setProfileAuthenticated` in the dialog will handle access.
@@ -154,6 +156,7 @@ export default function DashboardLayout({
           <span /> 
         </ModoVendedorDialog>
       </div>
+      </AuthGuard>
     );
   }
 
@@ -163,9 +166,10 @@ export default function DashboardLayout({
   }
 
   return (
-    <TrialGuard>
-      <AppHeader />
-      <div className="flex flex-1">
+    <AuthGuard>
+      <TrialGuard>
+        <AppHeader />
+        <div className="flex flex-1">
         <Sidebar
           collapsible="none"
           className="border-r border-border bg-primary text-primary-foreground sticky top-16 h-[calc(100vh-4rem)]"
@@ -246,6 +250,7 @@ export default function DashboardLayout({
         <TourGuide />
         <TourHelpButton />
       </div>
-    </TrialGuard>
+      </TrialGuard>
+    </AuthGuard>
   );
 }

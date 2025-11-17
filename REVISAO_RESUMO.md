@@ -22,10 +22,12 @@
 ### 1. **Inconsistência no Trial do Stripe** 🔴 CRÍTICO
 
 **Problema identificado:**
+
 - Usuário registrava → ganhava 1 dia de trial ✅
 - Usuário comprava plano → webhook criava MAIS 30 dias de trial ❌
 
 **Correção aplicada:**
+
 ```typescript
 // ANTES: Criava novo trial de 30 dias
 status: 'TRIAL',
@@ -43,6 +45,7 @@ trialEndsAt: null // Trial já foi usado no registro
 **Problema:** Console.log expunha códigos de indicação
 
 **Correção aplicada:**
+
 ```typescript
 // REMOVIDO:
 console.log(`Código de indicação salvo: ${refCode}`);
@@ -55,24 +58,28 @@ console.log(`Código de indicação salvo: ${refCode}`);
 ## 🎯 PONTOS FORTES IDENTIFICADOS
 
 ### 1. **Arquitetura** ⭐⭐⭐⭐⭐
+
 - Next.js 15 App Router
 - Prisma ORM type-safe
 - Multi-tenant com isolamento correto
 - APIs RESTful organizadas
 
 ### 2. **Segurança de Dados** ⭐⭐⭐⭐
+
 - Verificação de ownership em TODOS os endpoints
 - Cascade delete configurado
 - Unique constraints
 - Headers de autenticação
 
 ### 3. **Integração Stripe** ⭐⭐⭐⭐⭐
+
 - 5 webhooks implementados
 - Comissão de indicação automática
 - Gestão de status completa
 - Tratamento de erros robusto
 
 ### 4. **Error Handling** ⭐⭐⭐⭐⭐
+
 - Try-catch em todas as APIs
 - Mensagens apropriadas
 - Status codes corretos
@@ -83,18 +90,21 @@ console.log(`Código de indicação salvo: ${refCode}`);
 ## ⚠️ PONTOS DE ATENÇÃO (Não-Bloqueantes)
 
 ### 1. **Autenticação via Header** 🔐
+
 **Atual:** `x-user-email` no header  
 **Risco:** Pode ser falsificado em produção aberta  
 **Solução futura:** Implementar JWT  
 **Status:** ✅ OK para MVP controlado
 
 ### 2. **SQLite em Produção** 💾
+
 **Atual:** Banco SQLite local  
 **Limitação:** Não ideal para alta concorrência  
 **Solução futura:** Migrar para PostgreSQL  
 **Status:** ✅ OK para MVP e médio porte
 
 ### 3. **Console.log Presente** 📊
+
 **Quantidade:** ~95 ocorrências  
 **Tipo:** Principalmente console.error (correto)  
 **Status:** ✅ Aceitável para produção  
@@ -140,11 +150,13 @@ NEXT_PUBLIC_STRIPE_KEY="pk_live_..."
 ### O que testar após deploy:
 
 1. **Fluxo de registro:**
+
    - Criar conta nova
    - Verificar trial de 1 dia
    - Usar sistema normalmente
 
 2. **Fluxo de assinatura:**
+
    - Comprar plano Básico
    - Webhook deve ativar imediatamente (não criar trial)
    - Verificar status ACTIVE no dashboard
@@ -178,16 +190,19 @@ Modelos Prisma: 14
 ## 💡 PRÓXIMOS PASSOS (Pós-MVP)
 
 ### Prioridade ALTA (1-2 meses):
+
 1. **JWT Authentication** - Substituir header por token
 2. **PostgreSQL** - Migrar de SQLite para produção
 3. **Testes Automatizados** - Criar suite de testes
 
 ### Prioridade MÉDIA (3-6 meses):
+
 4. **Validação Zod** - Input validation em todas APIs
 5. **Rate Limiting** - Proteção contra abuso
 6. **Monitoring** - APM e alertas
 
 ### Prioridade BAIXA (6+ meses):
+
 7. **Logs Estruturados** - Winston ou Pino
 8. **CI/CD Pipeline** - Deploy automatizado
 9. **Multi-região** - CDN e edge computing
@@ -201,6 +216,7 @@ Modelos Prisma: 14
 **Seu código está excelente!** 👏
 
 Você implementou:
+
 - ✅ Arquitetura limpa e escalável
 - ✅ Isolamento de dados correto
 - ✅ Integração Stripe completa

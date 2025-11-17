@@ -46,10 +46,6 @@ export function UserProvider({ children }: { children: ReactNode }) {
       });
       
       localStorage.setItem(USER_KEY, JSON.stringify(user));
-      
-      // Set cookie for middleware authentication
-      document.cookie = `user_email=${user.email}; path=/; max-age=2592000; SameSite=Lax`;
-      
       setUser(user);
     } catch (error) {
       console.error("Failed to save user to localStorage", error);
@@ -73,9 +69,6 @@ export function UserProvider({ children }: { children: ReactNode }) {
         });
       }
       localStorage.removeItem(USER_KEY);
-      
-      // Clear authentication cookie
-      document.cookie = 'user_email=; path=/; max-age=0; SameSite=Lax';
     } catch (error) {
       console.error("Failed to clear user data from localStorage", error);
     }

@@ -31,16 +31,18 @@
 
 ```typescript
 // Padrão consistente em todas as APIs:
-const user = await prisma.user.findUnique({ where: { email } })
-if (!user) return NextResponse.json({ error: 'User not found' }, { status: 404 })
+const user = await prisma.user.findUnique({ where: { email } });
+if (!user)
+  return NextResponse.json({ error: "User not found" }, { status: 404 });
 
 // Verificação de ownership antes de operações:
 const product = await prisma.product.findFirst({
-  where: { id, userId: user.id }
-})
+  where: { id, userId: user.id },
+});
 ```
 
 **Verificações implementadas:**
+
 - ✅ Autenticação via header `x-user-email`
 - ✅ Verificação de ownership em TODOS os endpoints
 - ✅ Cascade delete configurado no schema
@@ -58,6 +60,7 @@ const product = await prisma.product.findFirst({
 ```
 
 **Features implementadas:**
+
 - ✅ Sistema de trial de 1 dia
 - ✅ Comissão de indicação automática
 - ✅ Gestão de status de subscription
@@ -82,8 +85,8 @@ model User {
 try {
   // Lógica
 } catch (error) {
-  console.error('Error context:', error)
-  return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
+  console.error("Error context:", error);
+  return NextResponse.json({ error: "Internal server error" }, { status: 500 });
 }
 ```
 
@@ -101,18 +104,20 @@ try {
 
 ```typescript
 // Webhook logging (útil para debug de produção):
-console.log(`Subscription criada para user ${userId}: ${plan}`)
-console.log(`Comissão criada: ${commissionAmount} centavos`)
-console.log(`Evento não tratado: ${event.type}`)
+console.log(`Subscription criada para user ${userId}: ${plan}`);
+console.log(`Comissão criada: ${commissionAmount} centavos`);
+console.log(`Evento não tratado: ${event.type}`);
 ```
 
 **Status:** ✅ Aceitável  
 **Justificativa:**
+
 - `console.error`: MANTER para logs de erro
 - `console.log` em webhooks: MANTER para auditoria
 - `console.log` em referral-tracker: Pode remover (debug)
 
 **Ação recomendada (não urgente):**
+
 ```bash
 # Opcional: Remover logs de debug não-essenciais
 # Manter: console.error e logs de webhook/transações
@@ -121,14 +126,16 @@ console.log(`Evento não tratado: ${event.type}`)
 ### 2. **Autenticação via Header** 🔐
 
 **Implementação atual:**
+
 ```typescript
-const email = request.headers.get('x-user-email')
+const email = request.headers.get("x-user-email");
 ```
 
 **Status:** ⚠️ Funcional mas não ideal  
 **Risco:** Em produção na internet (não localhost), usuário pode falsificar email
 
 **Solução futura (pós-MVP):**
+
 1. Implementar JWT authentication
 2. Usar `Authorization: Bearer <token>`
 3. Migrar de SQLite para PostgreSQL com rate limiting
@@ -138,12 +145,13 @@ const email = request.headers.get('x-user-email')
 ### 3. **Conversões Monetárias** 💰
 
 **Padrão identificado:**
+
 ```typescript
 // API recebe em centavos (correto):
-priceCents: body.priceCents || Math.round(body.price * 100)
+priceCents: body.priceCents || Math.round(body.price * 100);
 
 // Frontend exibe em reais:
-const preco = produto.priceCents / 100
+const preco = produto.priceCents / 100;
 ```
 
 **Status:** ✅ Implementado corretamente  
@@ -152,17 +160,19 @@ const preco = produto.priceCents / 100
 ### 4. **Stripe Trial Configuration** ⏱️
 
 **Código atual:**
+
 ```typescript
 // Webhook: Trial de 30 dias
-trialEndsAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
+trialEndsAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000);
 
 // User registration: Trial de 1 dia
-trialEndsAt: new Date(Date.now() + 24 * 60 * 60 * 1000)
+trialEndsAt: new Date(Date.now() + 24 * 60 * 60 * 1000);
 ```
 
 **Status:** ⚠️ INCONSISTÊNCIA DETECTADA
 
 **Problema:**
+
 - Registro de usuário: 1 dia de trial (correto)
 - Webhook do Stripe: 30 dias de trial (inconsistente)
 
@@ -179,12 +189,14 @@ trialEndsAt: new Date(Date.now() + 24 * 60 * 60 * 1000)
 **Arquivo:** `src/app/api/stripe/webhook/route.ts` linha 88-90
 
 **Problema:**
+
 ```typescript
 // ATUAL: 30 dias de trial
-trialEndsAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
+trialEndsAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000);
 ```
 
 **Deveria ser:**
+
 ```typescript
 // CORREÇÃO: Trial já foi usado no registro, assinatura deve ser ACTIVE
 status: 'ACTIVE', // Não TRIAL
@@ -192,6 +204,7 @@ trialEndsAt: null, // Já usou o trial de 1 dia
 ```
 
 **Lógica correta:**
+
 1. Usuário se registra → ganha 1 dia de trial
 2. Usuário compra plano → assinatura fica ACTIVE imediatamente
 3. Webhook confirma → mantém ACTIVE (não cria novo trial)
@@ -249,22 +262,23 @@ console.log(`Código de indicação salvo: ${refCode}`);
 
 ```typescript
 // Exemplo de implementação futura:
-import { z } from 'zod'
+import { z } from "zod";
 
 const productSchema = z.object({
   name: z.string().min(1).max(100),
   priceCents: z.number().int().positive(),
   stock: z.number().int().nonnegative().optional(),
-})
+});
 
 export async function POST(request: NextRequest) {
-  const body = await request.json()
-  const validated = productSchema.parse(body) // Throws se inválido
+  const body = await request.json();
+  const validated = productSchema.parse(body); // Throws se inválido
   // ...
 }
 ```
 
 **Benefícios:**
+
 - Validação type-safe
 - Mensagens de erro claras
 - Documentação automática da API
@@ -273,19 +287,19 @@ export async function POST(request: NextRequest) {
 
 ```typescript
 // Exemplo com upstash/ratelimit:
-import { Ratelimit } from '@upstash/ratelimit'
+import { Ratelimit } from "@upstash/ratelimit";
 
 const ratelimit = new Ratelimit({
   redis: Redis.fromEnv(),
-  limiter: Ratelimit.slidingWindow(10, '10 s'),
-})
+  limiter: Ratelimit.slidingWindow(10, "10 s"),
+});
 
 export async function POST(request: NextRequest) {
-  const ip = request.ip ?? '127.0.0.1'
-  const { success } = await ratelimit.limit(ip)
-  
+  const ip = request.ip ?? "127.0.0.1";
+  const { success } = await ratelimit.limit(ip);
+
   if (!success) {
-    return NextResponse.json({ error: 'Too many requests' }, { status: 429 })
+    return NextResponse.json({ error: "Too many requests" }, { status: 429 });
   }
   // ...
 }
@@ -295,31 +309,31 @@ export async function POST(request: NextRequest) {
 
 ```typescript
 // Exemplo com winston ou pino:
-import logger from '@/lib/logger'
+import logger from "@/lib/logger";
 
-logger.info('Subscription created', {
+logger.info("Subscription created", {
   userId,
   plan,
   billingCycle,
   timestamp: new Date().toISOString(),
-})
+});
 ```
 
 ### 4. **Testes Automatizados** 🧪
 
 ```typescript
 // Exemplo com Jest + Testing Library:
-describe('ProductAPI', () => {
-  it('should create product with valid data', async () => {
-    const response = await POST(mockRequest)
-    expect(response.status).toBe(201)
-  })
-  
-  it('should reject unauthorized access', async () => {
-    const response = await POST(mockRequestNoAuth)
-    expect(response.status).toBe(401)
-  })
-})
+describe("ProductAPI", () => {
+  it("should create product with valid data", async () => {
+    const response = await POST(mockRequest);
+    expect(response.status).toBe(201);
+  });
+
+  it("should reject unauthorized access", async () => {
+    const response = await POST(mockRequestNoAuth);
+    expect(response.status).toBe(401);
+  });
+});
 ```
 
 ---
@@ -328,14 +342,14 @@ describe('ProductAPI', () => {
 
 ### Code Quality Score: **8.5/10** ⭐
 
-| Categoria | Score | Status |
-|-----------|-------|--------|
-| **Arquitetura** | 9/10 | ✅ Excelente |
-| **Segurança** | 7/10 | ⚠️ Bom (melhorar auth) |
-| **Performance** | 9/10 | ✅ Excelente |
-| **Manutenibilidade** | 8/10 | ✅ Muito bom |
-| **Error Handling** | 9/10 | ✅ Excelente |
-| **Testing** | 5/10 | ⚠️ Ausente (MVP ok) |
+| Categoria            | Score | Status                 |
+| -------------------- | ----- | ---------------------- |
+| **Arquitetura**      | 9/10  | ✅ Excelente           |
+| **Segurança**        | 7/10  | ⚠️ Bom (melhorar auth) |
+| **Performance**      | 9/10  | ✅ Excelente           |
+| **Manutenibilidade** | 8/10  | ✅ Muito bom           |
+| **Error Handling**   | 9/10  | ✅ Excelente           |
+| **Testing**          | 5/10  | ⚠️ Ausente (MVP ok)    |
 
 ### Análise de Complexidade:
 
@@ -371,13 +385,13 @@ Contextos: 7
 
 ### Prioridades Pós-MVP:
 
-| Prioridade | Item | Esforço | Impacto |
-|------------|------|---------|---------|
-| 🔴 Alta | Corrigir trial webhook | 30 min | Alto |
-| 🟡 Média | JWT authentication | 2 dias | Alto |
-| 🟡 Média | PostgreSQL migration | 1 dia | Médio |
-| 🟢 Baixa | Zod validation | 3 dias | Médio |
-| 🟢 Baixa | Testes automatizados | 1 semana | Alto |
+| Prioridade | Item                   | Esforço  | Impacto |
+| ---------- | ---------------------- | -------- | ------- |
+| 🔴 Alta    | Corrigir trial webhook | 30 min   | Alto    |
+| 🟡 Média   | JWT authentication     | 2 dias   | Alto    |
+| 🟡 Média   | PostgreSQL migration   | 1 dia    | Médio   |
+| 🟢 Baixa   | Zod validation         | 3 dias   | Médio   |
+| 🟢 Baixa   | Testes automatizados   | 1 semana | Alto    |
 
 ---
 
