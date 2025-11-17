@@ -27,14 +27,12 @@ const SellerModeContext = createContext<SellerModeContextType | undefined>(undef
 
 const getStorageKey = (userEmail: string, key: string) => `${userEmail}_${key}`;
 
-const DEFAULT_OWNER_PIN = '1234';
-
 export function SellerModeProvider({ children }: { children: ReactNode }) {
   const { user } = useUser();
   const [isSellerMode, setIsSellerMode] = useState<boolean>(false);
   const [profileAuthenticated, setProfileAuthenticatedState] = useState<boolean>(false);
   const [currentCollaborator, setCurrentCollaborator] = useState<Collaborator | null>(null);
-  const [ownerPin, setOwnerPinState] = useState<string>(DEFAULT_OWNER_PIN);
+  const [ownerPin, setOwnerPinState] = useState<string>('');
   const [isInitialized, setIsInitialized] = useState(false);
 
   useEffect(() => {
@@ -61,8 +59,6 @@ export function SellerModeProvider({ children }: { children: ReactNode }) {
 
         if (storedOwnerPin) {
           setOwnerPinState(storedOwnerPin);
-        } else {
-          localStorage.setItem(ownerPinKey, DEFAULT_OWNER_PIN);
         }
 
       } catch (error) {

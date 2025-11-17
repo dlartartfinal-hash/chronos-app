@@ -12,7 +12,7 @@ model User {
   email     String   @unique
   name      String
   password  String   @default("")
-  ownerPin  String   @default("1234")
+  ownerPin  String   @default("")
   referredBy String? // Código de quem indicou este usuário
   trialEndsAt DateTime? // Data de expiração do trial (1 dia após criação)
   createdAt DateTime @default(now())
