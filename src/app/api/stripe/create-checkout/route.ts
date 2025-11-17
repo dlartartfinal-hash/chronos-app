@@ -61,6 +61,11 @@ export async function POST(request: NextRequest) {
     }
 
     // Criar Checkout Session
+    const successUrl = `${process.env.NEXT_PUBLIC_APP_URL}/dashboard/assinatura/sucesso?session_id={CHECKOUT_SESSION_ID}`;
+    const cancelUrl = `${process.env.NEXT_PUBLIC_APP_URL}/dashboard/assinatura`;
+    
+    console.log('Creating checkout session with URLs:', { successUrl, cancelUrl });
+    
     const session = await stripe.checkout.sessions.create({
       customer: stripeCustomerId,
       payment_method_types: ['card'],
@@ -79,8 +84,8 @@ export async function POST(request: NextRequest) {
           billingCycle,
         },
       },
-      success_url: `${process.env.NEXT_PUBLIC_APP_URL}/dashboard/assinatura/sucesso?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${process.env.NEXT_PUBLIC_APP_URL}/dashboard/assinatura`,
+      success_url: successUrl,
+      cancel_url: cancelUrl,
       metadata: {
         userId: user.id,
         plan,
