@@ -336,6 +336,33 @@ export default function PdvPage() {
     }
     if (item.type === 'service' || (item.type === 'product' && !item.hasVariations)) {
       const simpleProductOrService = item as (Service | (Product & { hasVariations: false }));
+      
+      // Check stock for products
+      if (item.type === 'product') {
+        const currentStock = simpleProductOrService.stock || 0;
+        const cartId = simpleProductOrService.sku!;
+        const itemInCart = cartItems.find((i) => i.id === cartId);
+        const quantityInCart = itemInCart ? itemInCart.quantity : 0;
+        
+        if (currentStock <= 0) {
+          toast({
+            variant: 'destructive',
+            title: 'Produto sem estoque',
+            description: `${simpleProductOrService.name} está com estoque zerado.`,
+          });
+          return;
+        }
+        
+        if (quantityInCart >= currentStock) {
+          toast({
+            variant: 'destructive',
+            title: 'Estoque insuficiente',
+            description: `${simpleProductOrService.name} possui apenas ${currentStock} unidade(s) disponível(is).`,
+          });
+          return;
+        }
+      }
+      
       const cartId = item.type === 'product' ? simpleProductOrService.sku! : simpleProductOrService.code;
       const promotion = getApplicablePromotion(item.id!);
       const originalPrice = simpleProductOrService.price!;
@@ -369,10 +396,33 @@ export default function PdvPage() {
       setItemForVariationSelection(item);
       setIsVariationSelectorOpen(true);
     }
-  }, [getApplicablePromotion]);
+  }, [getApplicablePromotion, cartItems, toast]);
 
   const handleSelectVariation = (variation: ProductVariation) => {
+    // Check stock for variation
+    const currentStock = variation.stock || 0;
     const cartId = variation.sku || `${itemForVariationSelection?.id}-${variation.name}`;
+    const itemInCart = cartItems.find((i) => i.id === cartId);
+    const quantityInCart = itemInCart ? itemInCart.quantity : 0;
+    
+    if (currentStock <= 0) {
+      toast({
+        variant: 'destructive',
+        title: 'Variação sem estoque',
+        description: `${itemForVariationSelection?.name} (${variation.name}) está com estoque zerado.`,
+      });
+      return;
+    }
+    
+    if (quantityInCart >= currentStock) {
+      toast({
+        variant: 'destructive',
+        title: 'Estoque insuficiente',
+        description: `${itemForVariationSelection?.name} (${variation.name}) possui apenas ${currentStock} unidade(s) disponível(is).`,
+      });
+      return;
+    }
+    
     const promotion = getApplicablePromotion(itemForVariationSelection!.id!);
     const originalPrice = variation.price;
     const finalPrice = promotion ? originalPrice * (1 - promotion.discount / 100) : originalPrice;
@@ -415,6 +465,37 @@ export default function PdvPage() {
       handleRemoveFromCart(cartId);
       return;
     }
+    
+    // Find the cart item
+    const cartItem = cartItems.find((i) => i.id === cartId);
+    if (!cartItem) return;
+    
+    // Check stock for products
+    if (cartItem.productId) {
+      let availableStock = 0;
+      let itemName = cartItem.name;
+      
+      if (cartItem.variationId) {
+        // Product with variation
+        const product = products.find(p => p.id === cartItem.productId);
+        const variation = product?.variations?.find(v => v.id === cartItem.variationId);
+        availableStock = variation?.stock || 0;
+      } else {
+        // Simple product
+        const product = products.find(p => p.id === cartItem.productId);
+        availableStock = product?.stock || 0;
+      }
+      
+      if (quantity > availableStock) {
+        toast({
+          variant: 'destructive',
+          title: 'Estoque insuficiente',
+          description: `${itemName} possui apenas ${availableStock} unidade(s) disponível(is).`,
+        });
+        return;
+      }
+    }
+    
     setCartItems((prevItems) =>
       prevItems.map((item) =>
         item.id === cartId ? { ...item, quantity } : item

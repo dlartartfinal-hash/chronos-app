@@ -15,7 +15,7 @@ import {
   ReceiptText,
   X,
   Printer,
-  Mail,
+  // Mail, // Comentado - mantido para possível uso futuro de envio por email
   User,
   ShoppingBag,
   CircleUser,
@@ -387,10 +387,10 @@ export default function VendasPage() {
                       <Printer className="mr-2 h-4 w-4" />
                       Imprimir Recibo
                     </Button>
-                    <Button>
+                    {/* <Button>
                        <Mail className="mr-2 h-4 w-4" />
                       Enviar por E-mail
-                    </Button>
+                    </Button> */}
                 </SheetFooter>
               </>
             )}
