@@ -4,6 +4,7 @@
 import { LogOut, Settings, User } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { useState, useEffect } from 'react';
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
@@ -19,13 +20,46 @@ import {
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { useToast } from '@/hooks/use-toast';
 import { useUser } from '@/context/user-context';
+import { apiRequest } from '@/lib/api';
 
-const userAvatar = PlaceHolderImages.find((img) => img.id === 'user-avatar-1');
+const defaultAvatar = PlaceHolderImages.find((img) => img.id === 'user-avatar-1');
 
 export function UserNav() {
   const router = useRouter();
   const { toast } = useToast();
   const { user, logout } = useUser();
+  const [avatarUrl, setAvatarUrl] = useState<string>(defaultAvatar?.imageUrl || '');
+
+  // Load avatar from settings
+  useEffect(() => {
+    const loadAvatar = async () => {
+      try {
+        const settings = await apiRequest<any>('settings');
+        if (settings.profileAvatar) {
+          setAvatarUrl(settings.profileAvatar);
+        }
+      } catch (error) {
+        console.error("Failed to load avatar:", error);
+      }
+    };
+    
+    if (user) {
+      loadAvatar();
+    }
+    
+    // Listen for avatar updates
+    const handleAvatarUpdate = (event: CustomEvent) => {
+      if (event.detail) {
+        setAvatarUrl(event.detail);
+      }
+    };
+    
+    window.addEventListener('avatar-updated', handleAvatarUpdate as EventListener);
+    
+    return () => {
+      window.removeEventListener('avatar-updated', handleAvatarUpdate as EventListener);
+    };
+  }, [user]);
 
   const handleLogout = () => {
     logout();
@@ -41,13 +75,10 @@ export function UserNav() {
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" className="relative h-8 w-8 rounded-full">
           <Avatar className="h-9 w-9">
-            {userAvatar && (
-              <AvatarImage
-                src={userAvatar.imageUrl}
-                alt="User Avatar"
-                data-ai-hint={userAvatar.imageHint}
-              />
-            )}
+            <AvatarImage
+              src={avatarUrl}
+              alt="User Avatar"
+            />
             <AvatarFallback>{user?.name.charAt(0).toUpperCase() || 'U'}</AvatarFallback>
           </Avatar>
         </Button>

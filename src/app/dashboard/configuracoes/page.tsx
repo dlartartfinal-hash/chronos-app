@@ -32,6 +32,8 @@ import { useUser } from '@/context/user-context';
 import { apiRequest } from '@/lib/api';
 import { useTour } from '@/context/tour-context';
 import { HelpCircle, RotateCcw, Play, Pause } from 'lucide-react';
+import { PlaceHolderImages } from '@/lib/placeholder-images';
+import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 
 
 // --- Helper Functions ---
@@ -176,6 +178,16 @@ export default function ConfiguracoesPage() {
   const [companyCnpj, setCompanyCnpj] = useState('');
   const [companyPhone, setCompanyPhone] = useState('');
   const [companyAddress, setCompanyAddress] = useState('');
+  
+  // Profile avatar state
+  const [selectedAvatar, setSelectedAvatar] = useState<string>('');
+  
+  // Filter only user avatar images
+  const userAvatars = PlaceHolderImages.filter(img => 
+    img.id.startsWith('user-avatar') || 
+    img.id.startsWith('user-generic') || 
+    img.id.startsWith('user-sales')
+  );
 
   // Load settings from database
   useEffect(() => {
@@ -206,6 +218,9 @@ export default function ConfiguracoesPage() {
         if (settings.companyCnpj) setCompanyCnpj(settings.companyCnpj);
         if (settings.companyPhone) setCompanyPhone(settings.companyPhone);
         if (settings.companyAddress) setCompanyAddress(settings.companyAddress);
+        
+        // Load profile avatar
+        if (settings.profileAvatar) setSelectedAvatar(settings.profileAvatar);
         
         // Load theme colors based on mode
         if (isDark) {
@@ -481,6 +496,32 @@ export default function ConfiguracoesPage() {
     }
   };
   
+  const handleSaveAvatar = async () => {
+    try {
+      await apiRequest('settings', {
+        method: 'PUT',
+        body: JSON.stringify({
+          profileAvatar: selectedAvatar,
+        }),
+      });
+      
+      // Dispatch event to update avatar in header
+      window.dispatchEvent(new CustomEvent('avatar-updated', { detail: selectedAvatar }));
+      
+      toast({
+        title: 'Avatar Salvo!',
+        description: 'Sua foto de perfil foi atualizada.',
+      });
+    } catch (error) {
+      console.error("Failed to save avatar:", error);
+      toast({
+        variant: 'destructive',
+        title: 'Erro ao Salvar',
+        description: 'Não foi possível salvar o avatar. Tente novamente.',
+      });
+    }
+  };
+  
   if (!mounted || !user) {
     return null;
   }
@@ -537,6 +578,70 @@ export default function ConfiguracoesPage() {
                     <Button onClick={handleSaveLogo}>
                       <Save className="mr-2 h-4 w-4" />
                       Salvar Logo
+                    </Button>
+                  </div>
+                </div>
+              </AccordionContent>
+            </AccordionItem>
+
+            <AccordionItem value="profile">
+              <AccordionTrigger className="px-6 hover:no-underline">
+                <div className="text-left">
+                  <h3 className="text-lg font-semibold">Foto do Perfil</h3>
+                  <p className="text-sm text-muted-foreground">Escolha seu avatar personalizado</p>
+                </div>
+              </AccordionTrigger>
+              <AccordionContent className="px-6 pb-6">
+                <div className="space-y-6">
+                  <div className="space-y-4">
+                    <div className="flex items-center gap-4 p-4 rounded-lg border bg-card">
+                      <Avatar className="h-20 w-20 border-2 border-primary">
+                        <AvatarImage src={selectedAvatar} alt="Avatar selecionado" />
+                        <AvatarFallback>{user?.name?.charAt(0) || 'U'}</AvatarFallback>
+                      </Avatar>
+                      <div className="text-left">
+                        <h4 className="font-semibold">{user?.name}</h4>
+                        <p className="text-sm text-muted-foreground">{user?.email}</p>
+                        <p className="text-xs text-muted-foreground mt-1">
+                          {selectedAvatar ? 'Avatar personalizado' : 'Nenhum avatar selecionado'}
+                        </p>
+                      </div>
+                    </div>
+                    
+                    <div className="text-left">
+                      <Label className="text-base mb-3 block">Escolha um Avatar</Label>
+                      <div className="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 lg:grid-cols-10 gap-3">
+                        {userAvatars.map((avatar) => (
+                          <button
+                            key={avatar.id}
+                            onClick={() => setSelectedAvatar(avatar.imageUrl)}
+                            className={cn(
+                              "relative rounded-full border-2 transition-all hover:scale-110 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2",
+                              selectedAvatar === avatar.imageUrl 
+                                ? "border-primary ring-2 ring-primary ring-offset-2 scale-110" 
+                                : "border-border hover:border-primary"
+                            )}
+                            title={avatar.description}
+                          >
+                            <Avatar className="h-12 w-12">
+                              <AvatarImage src={avatar.imageUrl} alt={avatar.description} />
+                              <AvatarFallback>{avatar.description.charAt(0)}</AvatarFallback>
+                            </Avatar>
+                            {selectedAvatar === avatar.imageUrl && (
+                              <div className="absolute -top-1 -right-1 bg-primary rounded-full p-0.5">
+                                <Check className="h-3 w-3 text-primary-foreground" />
+                              </div>
+                            )}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div className="flex justify-end">
+                    <Button onClick={handleSaveAvatar} disabled={!selectedAvatar}>
+                      <Save className="mr-2 h-4 w-4" />
+                      Salvar Avatar
                     </Button>
                   </div>
                 </div>

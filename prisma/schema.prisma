@@ -211,6 +211,9 @@ model Settings {
   // Custom logo
   customLogoSvg         String?
   
+  // Profile avatar
+  profileAvatar         String?
+  
   // Payment method rates (JSON string)
   paymentRates          String?
   
