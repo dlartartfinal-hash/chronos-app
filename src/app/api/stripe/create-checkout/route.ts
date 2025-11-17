@@ -24,6 +24,15 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Usuário não encontrado' }, { status: 404 });
     }
 
+    // Verificar se já tem assinatura ativa
+    if (user.subscription && (user.subscription.status === 'ACTIVE' || user.subscription.status === 'TRIAL')) {
+      return NextResponse.json({ 
+        error: 'Você já possui uma assinatura ativa. Cancele a atual antes de criar uma nova.',
+        currentPlan: user.subscription.plan,
+        status: user.subscription.status,
+      }, { status: 400 });
+    }
+
     const priceId = getStripePriceId(plan, billingCycle);
     if (!priceId) {
       return NextResponse.json({ 

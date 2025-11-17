@@ -248,8 +248,8 @@ export default function AssinaturaPage() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl mx-auto items-stretch">
                 {plans.map((plan, index) => {
-                    // Só é "plano atual" se tiver assinatura ATIVA e o nome do plano bater
-                    const isSelected = subscription?.status === 'active' && subscription?.plan === plan.name;
+                    // Plano atual: verifica se é TRIAL ou ACTIVE e o nome bate
+                    const isCurrentPlan = (subscription?.status === 'ACTIVE' || subscription?.status === 'TRIAL') && subscription?.plan === plan.name;
                     const isEmpresarialUser = subscription?.plan === 'Empresarial';
                     
                     // Definir hierarquia de planos
@@ -259,29 +259,29 @@ export default function AssinaturaPage() {
                         'Empresarial': 3,
                     };
                     
-                    // Se não tem assinatura ativa, não é downgrade
-                    const currentPlanLevel = subscription?.status === 'active' ? planHierarchy[subscription?.plan || ''] : 0;
+                    // Se não tem assinatura ativa/trial, não é downgrade
+                    const currentPlanLevel = (subscription?.status === 'ACTIVE' || subscription?.status === 'TRIAL') ? planHierarchy[subscription?.plan || ''] : 0;
                     const targetPlanLevel = planHierarchy[plan.name];
                     const isDowngrade = currentPlanLevel > 0 && targetPlanLevel < currentPlanLevel;
                     
-                    const shouldDisableButton = isSelected || isUpdating || (isEmpresarialUser && plan.name !== 'Empresarial') || isDowngrade;
+                    const shouldDisableButton = isCurrentPlan || isUpdating || (isEmpresarialUser && plan.name !== 'Empresarial') || isDowngrade;
 
                     return (
                         <Card 
                             key={plan.name} 
                             className={cn(
                                 "flex flex-col relative overflow-hidden animate-fade-in-up opacity-0", 
-                                isSelected ? "border-primary ring-2 ring-primary" : plan.popular ? "border-primary" : ""
+                                isCurrentPlan ? "border-green-500 ring-2 ring-green-500" : plan.popular ? "border-primary" : ""
                             )}
                             style={{ animationDelay: `${index * 100}ms` }}
                         >
-                            {plan.popular && !isSelected && (
+                            {plan.popular && !isCurrentPlan && (
                                 <div className="py-1 px-4 bg-primary text-primary-foreground text-center text-sm font-semibold absolute top-0 left-1/2 -translate-x-1/2 w-32 rounded-b-md">
                                     Mais Popular
                                 </div>
                             )}
-                             {isSelected && (
-                                <div className="py-1 px-4 bg-primary text-primary-foreground text-center text-sm font-semibold absolute top-0 left-1/2 -translate-x-1/2 w-32 rounded-b-md flex items-center justify-center gap-1">
+                             {isCurrentPlan && (
+                                <div className="py-1 px-4 bg-green-600 text-white text-center text-sm font-semibold absolute top-0 left-1/2 -translate-x-1/2 w-36 rounded-b-md flex items-center justify-center gap-1">
                                     <CheckCircle className="h-4 w-4" />
                                     Plano Atual
                                 </div>
@@ -323,17 +323,17 @@ export default function AssinaturaPage() {
                             <CardFooter>
                                 <Button 
                                     className="w-full"
-                                    variant={plan.popular || isSelected ? 'default' : 'outline'}
+                                    variant={isCurrentPlan ? 'default' : plan.popular ? 'default' : 'outline'}
                                     disabled={shouldDisableButton}
                                     onClick={() => handleSelectPlan(plan)}
                                 >
                                     {isUpdating && <Loader2 className="h-4 w-4 animate-spin mr-2" />}
-                                    {isSelected 
-                                        ? 'Plano Atual' 
+                                    {isCurrentPlan 
+                                        ? 'Seu Plano Atual' 
                                         : isDowngrade || (isEmpresarialUser && plan.name !== 'Empresarial')
                                         ? 'Entre em Contato' 
                                         : plan.cta}
-                                    {!isSelected && !isDowngrade && plan.monthlyPrice !== null && plan.monthlyPrice > 0 && (
+                                    {!isCurrentPlan && !isDowngrade && plan.monthlyPrice !== null && plan.monthlyPrice > 0 && (
                                         <ExternalLink className="h-4 w-4 ml-2" />
                                     )}
                                 </Button>
