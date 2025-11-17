@@ -92,50 +92,25 @@ export default function AssinaturaPage() {
         try {
             setIsUpdating(true);
             
-            // Se já tem assinatura ativa com Stripe E não está cancelada, fazer upgrade/downgrade
-            if (subscription?.stripeSubscriptionId && subscription?.status !== 'CANCELLED') {
-                const response = await fetch('/api/stripe/update-subscription', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        plan: plan.name,
-                        billingCycle,
-                        userEmail: user.email,
-                    }),
-                });
+            // SIMPLIFICADO: Sempre criar nova assinatura via Stripe Checkout
+            // O Stripe gerencia upgrades/downgrades automaticamente
+            const response = await fetch('/api/stripe/create-checkout', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    plan: plan.name,
+                    billingCycle,
+                    userEmail: user.email,
+                }),
+            });
 
-                const data = await response.json();
+            const data = await response.json();
 
-                if (data.success) {
-                    toast({
-                        title: "Plano atualizado!",
-                        description: `Seu plano foi alterado para ${plan.name} com sucesso.`,
-                    });
-                    // Recarregar a página para atualizar os dados
-                    window.location.reload();
-                } else {
-                    throw new Error(data.error || 'Erro ao atualizar plano');
-                }
+            if (data.url) {
+                // Redirecionar para checkout do Stripe
+                window.location.href = data.url;
             } else {
-                // Nova assinatura OU assinatura cancelada - redirecionar para checkout Stripe
-                const response = await fetch('/api/stripe/create-checkout', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        plan: plan.name,
-                        billingCycle,
-                        userEmail: user.email,
-                    }),
-                });
-
-                const data = await response.json();
-
-                if (data.url) {
-                    // Redirecionar para checkout do Stripe
-                    window.location.href = data.url;
-                } else {
-                    throw new Error(data.error || 'URL de checkout não encontrada');
-                }
+                throw new Error(data.error || 'URL de checkout não encontrada');
             }
         } catch (error: any) {
             toast({

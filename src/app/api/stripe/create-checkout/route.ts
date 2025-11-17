@@ -24,14 +24,8 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Usuário não encontrado' }, { status: 404 });
     }
 
-    // Verificar se já tem assinatura ativa (não cancelada)
-    if (user.subscription && (user.subscription.status === 'ACTIVE' || user.subscription.status === 'TRIAL')) {
-      return NextResponse.json({ 
-        error: 'Você já possui uma assinatura ativa. Para alterar o plano, use a opção de upgrade/downgrade.',
-        currentPlan: user.subscription.plan,
-        status: user.subscription.status,
-      }, { status: 400 });
-    }
+    // REMOVIDO: Não bloquear mais se tiver assinatura ativa
+    // Deixar o usuário criar nova assinatura - o Stripe gerencia múltiplas subscriptions
 
     const priceId = getStripePriceId(plan, billingCycle);
     if (!priceId) {
