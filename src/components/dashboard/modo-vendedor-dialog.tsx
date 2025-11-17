@@ -73,7 +73,10 @@ export function ModoVendedorDialog({ children, open, onOpenChange, isPage = fals
       return;
     }
 
-    if (profileForPin.pin !== pin) {
+    // Se for proprietário e o PIN estiver vazio, aceita "1234" como padrão
+    const expectedPin = profileForPin.isOwner && !profileForPin.pin ? '1234' : profileForPin.pin;
+
+    if (expectedPin !== pin) {
       setError('PIN incorreto. Tente novamente.');
       setPin('');
       return;
@@ -223,7 +226,7 @@ export function ModoVendedorDialog({ children, open, onOpenChange, isPage = fals
                 id="pin"
                 type="password"
                 maxLength={4}
-                placeholder="••••"
+                placeholder={profileForPin.isOwner && !ownerPin ? "1234" : "••••"}
                 value={pin}
                 onChange={(e) => setPin(e.target.value.replace(/\D/g, ''))}
                 onKeyDown={(e) => e.key === 'Enter' && handleLogin()}
@@ -282,7 +285,7 @@ export function ModoVendedorDialog({ children, open, onOpenChange, isPage = fals
               id="pin"
               type="password"
               maxLength={4}
-              placeholder="••••"
+              placeholder={profileForPin.isOwner && !ownerPin ? "1234" : "••••"}
               value={pin}
               onChange={(e) => setPin(e.target.value.replace(/\D/g, ''))}
               onKeyDown={(e) => e.key === 'Enter' && handleLogin()}
