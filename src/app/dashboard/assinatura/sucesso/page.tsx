@@ -11,6 +11,7 @@ export default function SucessoAssinaturaPage() {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(false);
+  const [subscriptionData, setSubscriptionData] = useState<any>(null);
 
   useEffect(() => {
     const sessionId = searchParams.get('session_id');
@@ -21,10 +22,34 @@ export default function SucessoAssinaturaPage() {
       return;
     }
 
-    // Aguardar 2 segundos para webhook processar
-    setTimeout(() => {
-      setIsLoading(false);
-    }, 2000);
+    // Verificar sessão e criar subscription imediatamente
+    async function verifySession() {
+      try {
+        console.log('🔄 Verificando sessão do Stripe...');
+        const response = await fetch('/api/stripe/verify-session', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ sessionId }),
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          console.error('❌ Erro ao verificar sessão:', data);
+          setError(true);
+        } else {
+          console.log('✅ Subscription ativada:', data.subscription);
+          setSubscriptionData(data.subscription);
+        }
+      } catch (err) {
+        console.error('❌ Erro na requisição:', err);
+        setError(true);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+
+    verifySession();
   }, [searchParams]);
 
   if (isLoading) {
@@ -32,7 +57,8 @@ export default function SucessoAssinaturaPage() {
       <div className="flex items-center justify-center h-screen">
         <div className="text-center space-y-4">
           <Loader2 className="h-12 w-12 animate-spin text-primary mx-auto" />
-          <p className="text-muted-foreground">Processando sua assinatura...</p>
+          <p className="text-muted-foreground">Ativando sua assinatura...</p>
+          <p className="text-sm text-muted-foreground">Aguarde alguns segundos...</p>
         </div>
       </div>
     );
@@ -67,7 +93,7 @@ export default function SucessoAssinaturaPage() {
           </div>
           <CardTitle className="text-2xl">Assinatura Iniciada com Sucesso!</CardTitle>
           <CardDescription className="text-base mt-2">
-            Parabéns! Você agora tem acesso completo ao seu plano.
+            Parabéns! Você agora tem acesso completo ao plano <strong>{subscriptionData?.plan || 'Profissional'}</strong>.
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
