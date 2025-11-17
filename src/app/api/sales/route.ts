@@ -86,6 +86,37 @@ export async function POST(request: NextRequest) {
       },
     })
 
+    // Update stock for products and variations
+    for (const item of items) {
+      if (item.productVariationId) {
+        // Update product variation stock
+        await prisma.productVariation.update({
+          where: { id: item.productVariationId },
+          data: {
+            stock: {
+              decrement: item.quantity,
+            },
+          },
+        })
+      } else if (item.productId) {
+        // Update product stock (if not variation)
+        const product = await prisma.product.findUnique({
+          where: { id: item.productId },
+        })
+        
+        if (product && product.stock !== null && !product.hasVariations) {
+          await prisma.product.update({
+            where: { id: item.productId },
+            data: {
+              stock: {
+                decrement: item.quantity,
+              },
+            },
+          })
+        }
+      }
+    }
+
     return NextResponse.json(sale, { status: 201 })
   } catch (error) {
     console.error('Error creating sale:', error)
