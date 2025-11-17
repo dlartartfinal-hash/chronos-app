@@ -147,14 +147,16 @@ const defaultExampleRates: PaymentRates = {
 
 
 export default function ConfiguracoesPage() {
-  const { theme, setTheme } = useTheme();
+  const { resolvedTheme } = useTheme();
   const { toast } = useToast();
-  const { ownerPin, updateOwnerPin } = useSellerMode();
+  const { ownerPin, setOwnerPin } = useSellerMode();
   const { user } = useUser();
   const { isTourActive, startTour, stopTour, resetTour } = useTour();
+  const [mounted, setMounted] = useState(false);
 
   const isDark = useMemo(() => resolvedTheme?.includes('dark'), [resolvedTheme]);
 
+  const [activeTheme, setActiveTheme] = useState('Padrão');
   const [primaryColor, setPrimaryColor] = useState('#000000');
   const [accentColor, setAccentColor] = useState('#000000');
   const [backgroundColor, setBackgroundColor] = useState('#000000');
