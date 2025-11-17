@@ -120,7 +120,7 @@ const ItemCard = React.memo(({ item, onAddItem }: { item: Item, onAddItem: (item
 
   return (
     <Card 
-        className="flex flex-col group relative overflow-hidden"
+        className="flex flex-col group relative overflow-hidden h-full"
         onClick={(e) => onAddItem(item, e)}
     >
         {promotion && (
@@ -128,23 +128,25 @@ const ItemCard = React.memo(({ item, onAddItem }: { item: Item, onAddItem: (item
                 <Percent className="h-3 w-3 mr-1" /> {promotion.discount}% OFF
             </Badge>
         )}
-      <CardContent className="p-2 flex-1 cursor-pointer">
-        <div className="aspect-square relative flex items-center justify-center">
-          <ProductImage
-            imageUrl={item.imageUrl || ''}
-            name={item.name}
-            size={120}
-            className="w-full h-full"
-          />
+      <CardContent className="p-2 flex-shrink-0 cursor-pointer">
+        <div className="aspect-square relative flex items-center justify-center bg-muted rounded-md overflow-hidden">
+          <div className="relative w-full h-full">
+            <ProductImage
+              imageUrl={item.imageUrl || ''}
+              name={item.name}
+              size={200}
+              className="w-full h-full object-cover"
+            />
+          </div>
            <Badge variant="secondary" className="absolute top-2 left-2 z-10">
             {isProduct ? <ShoppingBag className="h-3 w-3" /> : <Wrench className="h-3 w-3" />}
              <span className="ml-1.5">{isProduct ? 'Produto' : 'Serviço'}</span>
           </Badge>
         </div>
       </CardContent>
-      <CardFooter className="flex-col items-start p-2 pt-0">
+      <CardFooter className="flex-col items-start p-2 pt-0 flex-1">
         <h3 className="font-semibold text-sm truncate w-full">{item.name}</h3>
-        <div className="flex flex-col items-start">
+        <div className="flex flex-col items-start flex-1">
             {isProduct && item.hasVariations && <p className="text-xs text-muted-foreground">A partir de</p>}
             <div className="flex items-baseline gap-2">
                 <p className="text-lg font-bold text-card-foreground">
@@ -159,7 +161,7 @@ const ItemCard = React.memo(({ item, onAddItem }: { item: Item, onAddItem: (item
         </div>
         <Button
           size="sm"
-          className="w-full mt-2"
+          className="w-full mt-auto"
           variant="outline"
           onClick={(e) => {
             e.stopPropagation();
