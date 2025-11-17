@@ -1,47 +1,22 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useUser } from '@/context/user-context';
+import { useSubscription } from '@/context/subscription-context';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Clock, AlertTriangle } from 'lucide-react';
 
 export function TrialStatus() {
-  const { user } = useUser();
+  const { subscription } = useSubscription();
   const [timeLeft, setTimeLeft] = useState<string>('');
   const [isExpired, setIsExpired] = useState(false);
-  const [trialEndsAt, setTrialEndsAt] = useState<Date | null>(null);
 
   useEffect(() => {
-    async function fetchTrialInfo() {
-      if (!user) return;
-
-      try {
-        const response = await fetch('/api/user', {
-          headers: {
-            'x-user-email': user.email,
-          },
-        });
-
-        if (!response.ok) return;
-
-        const userData = await response.json();
-
-        if (userData.trialEndsAt) {
-          setTrialEndsAt(new Date(userData.trialEndsAt));
-        }
-      } catch (error) {
-        console.error('Error fetching trial info:', error);
-      }
-    }
-
-    fetchTrialInfo();
-  }, [user]);
-
-  useEffect(() => {
-    if (!trialEndsAt) return;
+    // Só mostrar se estiver em TRIAL
+    if (!subscription || subscription.status !== 'TRIAL' || !subscription.trialEndsAt) return;
 
     const updateTimeLeft = () => {
       const now = new Date();
+      const trialEndsAt = new Date(subscription.trialEndsAt);
       const diff = trialEndsAt.getTime() - now.getTime();
 
       if (diff <= 0) {
@@ -50,26 +25,27 @@ export function TrialStatus() {
         return;
       }
 
-      const hours = Math.floor(diff / (1000 * 60 * 60));
+      const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
       const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-      const seconds = Math.floor((diff % (1000 * 60)) / 1000);
 
-      if (hours > 0) {
-        setTimeLeft(`${hours}h ${minutes}m ${seconds}s`);
-      } else if (minutes > 0) {
-        setTimeLeft(`${minutes}m ${seconds}s`);
+      if (days > 0) {
+        setTimeLeft(`${days}d ${hours}h ${minutes}m`);
+      } else if (hours > 0) {
+        setTimeLeft(`${hours}h ${minutes}m`);
       } else {
-        setTimeLeft(`${seconds}s`);
+        setTimeLeft(`${minutes}m`);
       }
     };
 
     updateTimeLeft();
-    const interval = setInterval(updateTimeLeft, 1000);
+    const interval = setInterval(updateTimeLeft, 60000); // Atualizar a cada minuto
 
     return () => clearInterval(interval);
-  }, [trialEndsAt]);
+  }, [subscription]);
 
-  if (!trialEndsAt) return null;
+  // Não mostrar nada se não estiver em TRIAL
+  if (!subscription || subscription.status !== 'TRIAL') return null;
 
   return (
     <Alert variant={isExpired ? "destructive" : "default"} className="mb-6">
@@ -83,7 +59,7 @@ export function TrialStatus() {
       </AlertTitle>
       <AlertDescription>
         {isExpired ? (
-          'Seu período de trial de 1 dia expirou. Escolha um plano abaixo para continuar usando o sistema.'
+          'Seu período de trial expirou. Após a expiração, você precisará assinar um plano para continuar usando o sistema.'
         ) : (
           <>
             Seu trial expira em <strong>{timeLeft}</strong>. Após a expiração, você precisará assinar um plano para continuar usando o sistema.
