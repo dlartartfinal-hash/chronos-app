@@ -268,6 +268,7 @@ export default function PdvPage() {
   const [isProductFormOpen, setIsProductFormOpen] = useState(false);
   const [isCategoryFormOpen, setIsCategoryFormOpen] = useState(false);
   const [passFeeToCustomer, setPassFeeToCustomer] = useState(false);
+  const [isProcessingSale, setIsProcessingSale] = useState(false);
 
   const allItems: Item[] = useMemo(() => {
     return [
@@ -522,6 +523,10 @@ export default function PdvPage() {
       return;
     }
 
+    if (isProcessingSale) return; // Previne duplo clique
+
+    setIsProcessingSale(true);
+
      const subtotal = cartItems.reduce(
         (acc, item) => acc + item.originalPrice * item.quantity,
         0
@@ -567,6 +572,8 @@ export default function PdvPage() {
         title: "Erro ao finalizar venda",
         description: "Ocorreu um erro ao salvar a venda. Tente novamente.",
       });
+    } finally {
+      setIsProcessingSale(false);
     }
   }
 
@@ -923,8 +930,12 @@ export default function PdvPage() {
           </div>
           <DialogFooter>
             <Button type="button" variant="outline" onClick={() => setIsCheckoutOpen(false)}>Cancelar</Button>
-            <Button type="button" onClick={handleFinalizeSale} disabled={!selectedPaymentMethod || !selectedCustomer}>
-              Confirmar Venda
+            <Button 
+              type="button" 
+              onClick={handleFinalizeSale} 
+              disabled={!selectedPaymentMethod || !selectedCustomer || isProcessingSale}
+            >
+              {isProcessingSale ? "Processando..." : "Confirmar Venda"}
             </Button>
           </DialogFooter>
         </DialogContent>
