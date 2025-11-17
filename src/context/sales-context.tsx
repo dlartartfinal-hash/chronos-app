@@ -10,9 +10,13 @@ import { apiRequest } from '@/lib/api';
 // --- Types ---
 export type CartItem = { 
   id: string, 
+  productId?: string,
+  serviceId?: string,
+  variationId?: string,
   name: string,
   price: number, 
   originalPrice: number,
+  cost?: number,
   quantity: number,
   imageUrl: string,
   promotionId?: string,
@@ -136,6 +140,7 @@ export function SalesProvider({ children }: { children: ReactNode }) {
             quantity: item.quantity,
             priceCents: Math.round(item.price * 100),
             originalPriceCents: Math.round(item.originalPrice * 100),
+            costCents: item.cost ? Math.round(item.cost * 100) : null,
             imageUrl: item.imageUrl,
             promotionId: item.promotionId || null,
           })),

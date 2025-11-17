@@ -75,6 +75,7 @@ export async function POST(request: NextRequest) {
             quantity: item.quantity,
             priceCents: item.priceCents,
             originalPriceCents: item.originalPriceCents,
+            costCents: item.costCents || null,
             imageUrl: item.imageUrl,
             promotionId: item.promotionId || null,
           })),

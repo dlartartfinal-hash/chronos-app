@@ -37,6 +37,7 @@ import { ModoVendedorDialog } from '@/components/dashboard/modo-vendedor-dialog'
 import { useEffect, useState } from 'react';
 import { Collapsible, CollapsibleTrigger, CollapsibleContent } from '@/components/ui/collapsible';
 import { TrialGuard } from '@/components/trial-guard';
+import { TourGuide, TourHelpButton } from '@/components/tour-guide';
 
 export default function DashboardLayout({
   children,
@@ -242,6 +243,8 @@ export default function DashboardLayout({
           </div>
         </Sidebar>
         <main key={pathname} className="flex-1 overflow-auto space-y-4 p-4 pt-6 md:p-8 animate-fade-in-up">{children}</main>
+        <TourGuide />
+        <TourHelpButton />
       </div>
     </TrialGuard>
   );

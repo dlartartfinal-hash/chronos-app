@@ -13,6 +13,7 @@ import { CustomerProvider } from '@/context/customer-context';
 import { SalesProvider } from '@/context/sales-context';
 import { UserProvider } from '@/context/user-context';
 import { PromotionProvider } from '@/context/promotion-context';
+import { TourProvider } from '@/context/tour-context';
 import { Suspense } from 'react';
 import { ReferralTracker } from '@/components/referral-tracker';
 
@@ -53,9 +54,11 @@ export default function RootLayout({
                   <CustomerProvider>
                     <SalesProvider>
                       <PromotionProvider>
-                        <SidebarProvider>
-                            {children}
-                        </SidebarProvider>
+                        <TourProvider>
+                          <SidebarProvider>
+                              {children}
+                          </SidebarProvider>
+                        </TourProvider>
                       </PromotionProvider>
                     </SalesProvider>
                   </CustomerProvider>

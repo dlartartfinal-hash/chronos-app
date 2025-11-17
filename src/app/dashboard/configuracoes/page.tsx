@@ -30,6 +30,8 @@ import { Textarea } from '@/components/ui/textarea';
 import { CustomLogo } from '@/components/ui/custom-logo';
 import { useUser } from '@/context/user-context';
 import { apiRequest } from '@/lib/api';
+import { useTour } from '@/context/tour-context';
+import { HelpCircle, RotateCcw, Play, Pause } from 'lucide-react';
 
 
 // --- Helper Functions ---
@@ -145,12 +147,11 @@ const defaultExampleRates: PaymentRates = {
 
 
 export default function ConfiguracoesPage() {
-  const { resolvedTheme } = useTheme();
-  const { user } = useUser();
-  const [mounted, setMounted] = useState(false);
-  const [activeTheme, setActiveTheme] = useState('Padrão');
-  const { ownerPin, setOwnerPin } = useSellerMode();
+  const { theme, setTheme } = useTheme();
   const { toast } = useToast();
+  const { ownerPin, updateOwnerPin } = useSellerMode();
+  const { user } = useUser();
+  const { isTourActive, startTour, stopTour, resetTour } = useTour();
 
   const isDark = useMemo(() => resolvedTheme?.includes('dark'), [resolvedTheme]);
 
@@ -806,6 +807,65 @@ export default function ConfiguracoesPage() {
               <div className="flex justify-end pt-4">
                 <Button onClick={handleSaveRates}>Salvar Taxas</Button>
               </div>
+                </div>
+              </AccordionContent>
+            </AccordionItem>
+
+            <AccordionItem value="tour">
+              <AccordionTrigger className="px-6 hover:no-underline">
+                <div>
+                  <h3 className="text-lg font-semibold flex items-center gap-2">
+                    <HelpCircle className="h-5 w-5" />
+                    Guia Interativo
+                  </h3>
+                  <p className="text-sm text-muted-foreground">Controle o tour guiado do sistema</p>
+                </div>
+              </AccordionTrigger>
+              <AccordionContent className="px-6 pb-6">
+                <div className="space-y-4">
+                  <p className="text-sm text-muted-foreground">
+                    O guia interativo ajuda você a conhecer todas as funcionalidades do sistema. 
+                    Você pode iniciar, pausar ou reiniciar o tour a qualquer momento.
+                  </p>
+                  
+                  <div className="flex flex-wrap gap-3">
+                    <Button 
+                      onClick={startTour} 
+                      disabled={isTourActive}
+                      variant="default"
+                    >
+                      <Play className="mr-2 h-4 w-4" />
+                      Iniciar Guia
+                    </Button>
+                    
+                    <Button 
+                      onClick={stopTour} 
+                      disabled={!isTourActive}
+                      variant="outline"
+                    >
+                      <Pause className="mr-2 h-4 w-4" />
+                      Pausar Guia
+                    </Button>
+                    
+                    <Button 
+                      onClick={resetTour}
+                      variant="secondary"
+                    >
+                      <RotateCcw className="mr-2 h-4 w-4" />
+                      Reiniciar do Início
+                    </Button>
+                  </div>
+
+                  {isTourActive && (
+                    <div className="rounded-md bg-primary/10 p-3 text-sm">
+                      <p className="font-medium text-primary">
+                        ℹ️ O guia está ativo no momento
+                      </p>
+                      <p className="text-muted-foreground mt-1">
+                        Siga as instruções na tela ou clique em "Pausar Guia" para interromper.
+                      </p>
+                    </div>
+                  )}
                 </div>
               </AccordionContent>
             </AccordionItem>

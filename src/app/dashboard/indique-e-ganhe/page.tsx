@@ -95,7 +95,7 @@ export default function IndiqueEGanhePage() {
     
     setIsCopyingLink(true);
     try {
-      const referralLink = `${window.location.origin}/login?ref=${referralData.referralCode}`;
+      const referralLink = `${window.location.origin}/register?ref=${referralData.referralCode}`;
       await navigator.clipboard.writeText(referralLink);
       toast({
         title: 'Link Copiado!',
@@ -203,7 +203,7 @@ export default function IndiqueEGanhePage() {
           <div className="w-full max-w-2xl">
             <div className="bg-primary-foreground/10 rounded-lg px-4 py-3 text-center break-all">
               <p className="text-sm font-mono text-primary-foreground">
-                {`${typeof window !== 'undefined' ? window.location.origin : ''}/login?ref=${referralData.referralCode}`}
+                {`${typeof window !== 'undefined' ? window.location.origin : ''}/register?ref=${referralData.referralCode}`}
               </p>
             </div>
           </div>

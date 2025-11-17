@@ -87,6 +87,7 @@ export type CartItem = {
   name: string,
   price: number,
   originalPrice: number,
+  cost?: number, // Custo unitário
   quantity: number,
   imageUrl: string,
   promotionId?: string,
@@ -339,6 +340,7 @@ export default function PdvPage() {
       const promotion = getApplicablePromotion(item.id!);
       const originalPrice = simpleProductOrService.price!;
       const finalPrice = promotion ? originalPrice * (1 - promotion.discount / 100) : originalPrice;
+      const cost = simpleProductOrService.cost || 0;
       
       setCartItems((prevItems) => {
         const itemInCart = prevItems.find((i) => i.id === cartId);
@@ -354,6 +356,7 @@ export default function PdvPage() {
           name: simpleProductOrService.name,
           price: finalPrice,
           originalPrice: originalPrice,
+          cost: cost,
           quantity: 1,
           imageUrl: simpleProductOrService.imageUrl,
           promotionId: promotion?.id
@@ -373,6 +376,7 @@ export default function PdvPage() {
     const promotion = getApplicablePromotion(itemForVariationSelection!.id!);
     const originalPrice = variation.price;
     const finalPrice = promotion ? originalPrice * (1 - promotion.discount / 100) : originalPrice;
+    const cost = variation.cost || 0;
     
     setCartItems((prevItems) => {
       const itemInCart = prevItems.find((i) => i.id === cartId);
@@ -388,6 +392,7 @@ export default function PdvPage() {
         name: `${itemForVariationSelection?.name} (${variation.name})`,
         price: finalPrice,
         originalPrice: originalPrice,
+        cost: cost,
         quantity: 1,
         imageUrl: itemForVariationSelection!.imageUrl,
         promotionId: promotion?.id

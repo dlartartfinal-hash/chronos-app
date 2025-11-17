@@ -172,6 +172,7 @@ model SaleItem {
   quantity             Int
   priceCents           Int
   originalPriceCents   Int
+  costCents            Int?     // Custo unitário em centavos
   imageUrl             String?
   promotionId          String?
   
