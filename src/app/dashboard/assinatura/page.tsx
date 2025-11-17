@@ -18,11 +18,14 @@ import { useToast } from '@/hooks/use-toast';
 import { useSubscription, Plan } from '@/context/subscription-context';
 import { useInventory } from '@/context/inventory-context';
 import { useUser } from '@/context/user-context';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { TrialStatus } from '@/components/trial-status';
+import { useSearchParams, useRouter } from 'next/navigation';
 
 
 export default function AssinaturaPage() {
+    const searchParams = useSearchParams();
+    const router = useRouter();
     const { 
         plans, 
         subscription,
@@ -36,6 +39,14 @@ export default function AssinaturaPage() {
     const { user } = useUser();
     const { toast } = useToast();
     const [isUpdating, setIsUpdating] = useState(false);
+
+    // Redirecionar para página de sucesso se vier do Stripe
+    useEffect(() => {
+        const sessionId = searchParams.get('session_id');
+        if (sessionId) {
+            router.push(`/dashboard/assinatura/sucesso?session_id=${sessionId}`);
+        }
+    }, [searchParams, router]);
 
     const handleSelectPlan = async (plan: Plan) => {
         if (!user) return;
