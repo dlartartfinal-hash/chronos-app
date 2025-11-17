@@ -69,20 +69,29 @@ export async function POST(request: NextRequest) {
 }
 
 async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
+  console.log('🎯 Processing checkout.session.completed');
+  console.log('Session metadata:', session.metadata);
+  console.log('Session customer:', session.customer);
+  console.log('Session customer_email:', session.customer_email);
+  
   const userId = session.metadata?.userId;
   const plan = session.metadata?.plan;
   const billingCycle = session.metadata?.billingCycle;
 
   if (!userId || !plan || !billingCycle) {
-    console.error('Metadados ausentes no checkout session');
+    console.error('❌ Metadados ausentes no checkout session:', { userId, plan, billingCycle });
     return;
   }
+  
+  console.log('✅ Metadados encontrados:', { userId, plan, billingCycle });
 
   const stripeSubscriptionId = session.subscription as string;
+  
+  console.log('💾 Salvando subscription no banco...');
 
   // Atualizar subscription no banco
   // Cliente cadastra cartão e ganha 30 dias de trial para testar com calma
-  await prisma.subscription.upsert({
+  const subscription = await prisma.subscription.upsert({
     where: { userId },
     update: {
       plan,
@@ -102,10 +111,12 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
     },
   });
 
+  console.log('✅ Subscription salva:', subscription);
+
   // Processar comissão de indicação se houver
   await processReferralCommission(userId, plan, billingCycle);
 
-  console.log(`Subscription criada para user ${userId}: ${plan} (${billingCycle})`);
+  console.log(`✅ Subscription criada para user ${userId}: ${plan} (${billingCycle})`);
 }
 
 async function handleSubscriptionUpdated(subscription: any) {

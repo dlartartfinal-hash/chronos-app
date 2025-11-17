@@ -89,7 +89,6 @@ export async function POST(request: NextRequest) {
         name,
         password: hashedPassword,
         referredBy: referredBy || null,
-        // @ts-expect-error - Campo existe no schema Prisma, mas TS language server pode estar com cache desatualizado
         trialEndsAt,
       },
     })
