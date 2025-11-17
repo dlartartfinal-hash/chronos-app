@@ -26,7 +26,10 @@ export async function POST(request: NextRequest) {
 
     const priceId = getStripePriceId(plan, billingCycle);
     if (!priceId) {
-      return NextResponse.json({ error: 'Plano inválido' }, { status: 400 });
+      return NextResponse.json({ 
+        error: 'Plano não configurado. As variáveis de ambiente do Stripe não estão definidas corretamente no Vercel.',
+        details: `Plano: ${plan}, Ciclo: ${billingCycle}` 
+      }, { status: 400 });
     }
 
     // Criar ou recuperar Stripe Customer
@@ -85,11 +88,20 @@ export async function POST(request: NextRequest) {
       },
     });
 
+    if (!session.url) {
+      console.error('Stripe não retornou URL de checkout:', session);
+      return NextResponse.json(
+        { error: 'Não foi possível gerar URL de checkout. Verifique suas chaves do Stripe.' },
+        { status: 500 }
+      );
+    }
+
     return NextResponse.json({ sessionId: session.id, url: session.url });
   } catch (error) {
     console.error('Erro ao criar checkout session:', error);
+    const errorMessage = error instanceof Error ? error.message : 'Erro desconhecido';
     return NextResponse.json(
-      { error: 'Erro ao criar sessão de checkout' },
+      { error: 'Erro ao criar sessão de checkout', details: errorMessage },
       { status: 500 }
     );
   }
