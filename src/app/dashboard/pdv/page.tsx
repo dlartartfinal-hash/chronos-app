@@ -128,8 +128,8 @@ const ItemCard = React.memo(({ item, onAddItem }: { item: Item, onAddItem: (item
                 <Percent className="h-3 w-3 mr-1" /> {promotion.discount}% OFF
             </Badge>
         )}
-      <CardContent className="p-2 flex-shrink-0 cursor-pointer">
-        <div className="aspect-square relative flex items-center justify-center bg-muted rounded-md overflow-hidden">
+      <CardContent className="p-3 flex-shrink-0 cursor-pointer">
+        <div className="aspect-square relative flex items-center justify-center bg-muted rounded-md overflow-hidden mb-3">
           <div className="relative w-full h-full">
             <ProductImage
               imageUrl={item.imageUrl || ''}
@@ -143,35 +143,40 @@ const ItemCard = React.memo(({ item, onAddItem }: { item: Item, onAddItem: (item
              <span className="ml-1.5">{isProduct ? 'Produto' : 'Serviço'}</span>
           </Badge>
         </div>
-      </CardContent>
-      <CardFooter className="flex-col items-start p-2 pt-0 flex-1">
-        <h3 className="font-semibold text-sm truncate w-full">{item.name}</h3>
-        <div className="flex flex-col items-start flex-1">
-            {isProduct && item.hasVariations && <p className="text-xs text-muted-foreground">A partir de</p>}
+        
+        <div className="space-y-2">
+          <h3 className="font-semibold text-sm line-clamp-2 min-h-[2.5rem]">{item.name}</h3>
+          
+          <div className="space-y-1">
+            {isProduct && item.hasVariations && (
+              <p className="text-xs text-muted-foreground">A partir de</p>
+            )}
             <div className="flex items-baseline gap-2">
-                <p className="text-lg font-bold text-card-foreground">
+              <p className="text-lg font-bold text-card-foreground">
                 {formatCurrency(displayPrice || 0)}
+              </p>
+              {promotion && (
+                <p className="text-sm text-muted-foreground line-through">
+                  {formatCurrency(originalPrice || 0)}
                 </p>
-                {promotion && (
-                    <p className="text-sm text-muted-foreground line-through">
-                    {formatCurrency(originalPrice || 0)}
-                    </p>
-                )}
+              )}
             </div>
+          </div>
+          
+          <Button
+            size="sm"
+            className="w-full"
+            variant="outline"
+            onClick={(e) => {
+              e.stopPropagation();
+              onAddItem(item, e);
+            }}
+          >
+            <PlusCircle className="mr-2 h-4 w-4" />
+            Adicionar
+          </Button>
         </div>
-        <Button
-          size="sm"
-          className="w-full mt-auto"
-          variant="outline"
-          onClick={(e) => {
-            e.stopPropagation();
-            onAddItem(item, e);
-          }}
-        >
-          <PlusCircle className="mr-2 h-4 w-4" />
-          Adicionar
-        </Button>
-      </CardFooter>
+      </CardContent>
     </Card>
   );
 });
