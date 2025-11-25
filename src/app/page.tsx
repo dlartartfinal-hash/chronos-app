@@ -14,10 +14,10 @@ export default function LandingPage() {
         <div className="absolute inset-0 bg-black/50 -z-10" />
         <div className="relative text-center text-white px-6">
           <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-2">
-            Uma nova era chegou
+            Atualização completa
           </h1>
           <p className="text-lg sm:text-xl md:text-2xl opacity-90">
-            Faça parte da Chronos
+            Sistema totalmente atualizado
           </p>
         </div>
       </main>
