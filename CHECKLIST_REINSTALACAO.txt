@@ -1,0 +1,64 @@
+# Checklist de reinstalação do projeto Chronos
+
+1. Instalar Node.js (versão 18 ou superior)
+2. Instalar Yarn (opcional)
+3. Clonar o repositório:
+   git clone <URL_DO_SEU_REPOSITORIO>
+   cd <nome_da_pasta_do_projeto>
+4. Instalar dependências:
+   npm install
+   # ou
+   yarn install
+5. Restaurar o arquivo .env com as variáveis do banco e configurações
+6. Gerar o client do Prisma:
+   npx prisma generate
+7. Aplicar as migrações do banco:
+   npx prisma migrate deploy
+8. Iniciar o projeto:
+   npm run dev
+   # ou
+   yarn dev
+
+## Principais dependências (plugins)
+- next
+- react
+- react-dom
+- tailwindcss
+- prisma
+- @prisma/client
+- stripe
+- firebase
+- zod
+- bcryptjs
+- date-fns
+- clsx
+- lucide-react
+- next-pwa
+- next-themes
+- react-hook-form
+- recharts
+- embla-carousel-react
+- dexie
+- dexie-react-hooks
+- dotenv
+- patch-package
+- workbox-webpack-plugin
+- tailwind-merge
+- tailwindcss-animate
+- class-variance-authority
+- cmdk
+- Todos os pacotes Radix UI
+- Genkit e @genkit-ai
+
+## Dev dependencies
+- typescript
+- ts-node
+- @types/node
+- @types/react
+- @types/react-dom
+- @types/bcryptjs
+- genkit-cli
+- postcss
+- tailwindcss
+
+Pronto! Com esse checklist, você reinstala e roda o projeto do zero após formatar o PC.

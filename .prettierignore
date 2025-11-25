@@ -1,0 +1,10 @@
+.next
+node_modules
+build
+dist
+public
+coverage
+.turbo
+prisma/migrations
+.vercel
+*.min.js

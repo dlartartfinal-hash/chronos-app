@@ -1,0 +1,9 @@
+node_modules
+.next
+build
+dist
+public
+coverage
+/.vscode
+*.config.js
+/.turbo

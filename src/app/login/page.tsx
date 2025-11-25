@@ -152,8 +152,7 @@ export default function LoginPage() {
                           </Link>
                         </div>
                         <FormControl>
-                          <Input
-                            type="password"
+                          <PasswordInput
                             placeholder="••••••••"
                             {...field}
                           />
