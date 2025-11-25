@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -31,7 +31,6 @@ import { CustomLogo } from '@/components/ui/custom-logo';
 import { useUser } from '@/context/user-context';
 import { apiRequest } from '@/lib/api';
 import { getReferralCode } from '@/components/referral-tracker';
-import { useEffect, useState } from 'react';
 import { Info } from 'lucide-react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 
