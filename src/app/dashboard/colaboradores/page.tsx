@@ -335,7 +335,7 @@ export default function ColaboradoresPage() {
                   <FormItem>
                     <FormLabel>PIN (4 dígitos)</FormLabel>
                     <FormControl>
-                      <PasswordInput maxLength={4} placeholder="••••" {...field} />
+                      <Input type="password" maxLength={4} placeholder="••••" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
