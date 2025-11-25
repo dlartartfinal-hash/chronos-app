@@ -48,6 +48,7 @@ export default function ColaboradoresPage() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingCollaborator, setEditingCollaborator] = useState<Collaborator | null>(null);
   const [visiblePin, setVisiblePin] = useState<string | null>(null);
+  const [showPinInput, setShowPinInput] = useState(false);
   const { toast } = useToast();
   const { selectedPlan } = useSubscription();
 
@@ -335,7 +336,27 @@ export default function ColaboradoresPage() {
                   <FormItem>
                     <FormLabel>PIN (4 dígitos)</FormLabel>
                     <FormControl>
-                      <Input type="password" maxLength={4} placeholder="••••" {...field} />
+                      <div className="relative">
+                        <Input
+                          type={showPinInput ? 'text' : 'password'}
+                          maxLength={4}
+                          placeholder="••••"
+                          className="pr-10"
+                          {...field}
+                        />
+                        <button
+                          type="button"
+                          onClick={() => setShowPinInput(!showPinInput)}
+                          className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                          tabIndex={-1}
+                        >
+                          {showPinInput ? (
+                            <EyeOff size={18} />
+                          ) : (
+                            <Eye size={18} />
+                          )}
+                        </button>
+                      </div>
                     </FormControl>
                     <FormMessage />
                   </FormItem>
