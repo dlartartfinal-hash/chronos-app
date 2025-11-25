@@ -20,6 +20,9 @@
     "test:db": "node scripts/test-db.js",
     "test:all": "echo 'Siga README-local-testing.md para rodar os passos de teste local'"
   },
+  "prisma": {
+    "seed": "node prisma/seed.js"
+  },
   "dependencies": {
     "@genkit-ai/google-genai": "^1.20.0",
     "@genkit-ai/next": "^1.20.0",
